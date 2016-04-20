@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "\xB5\x62\x06\x01\x08\x00x\01x\01\x00\x00\x03\x00\x00\x14\xBB" > /dev/ttyACM0
+echo "B56206010800010100000003000014BB" | xxd -r -p  > /dev/ttyACM0
