@@ -44,7 +44,7 @@ NamedPipeUtility::NamedPipeUtility(void) {
 
 //-------------------------------------------------------------------------------------------------
 
-// Simplex methods ----------------------------------------------------------------------------
+// Simplex methods --------------------------------------------------------------------------------
 
 void NamedPipeUtility::Simplex_create(char* pipename, bool create) {
     tx_pipe = pipename;
