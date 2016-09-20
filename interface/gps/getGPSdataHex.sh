@@ -1,3 +1,6 @@
 #!/bin/bash
 
-cat /dev/ttyAMC0 | od -x
+#cat $1 | od -x
+# $1 is the usb interface for the gps sensor
+cat $1
+
