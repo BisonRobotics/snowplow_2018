@@ -100,7 +100,7 @@ class NamedPipeUtility {
         void HalfDuplex_close(void);
         void HalfDuplex_destroy(void);
 
-    private:
+    protected:
         void HalfDuplex_open_method_1(void); //Pipe operations are automatically assigned
         void HalfDuplex_open_method_2(void); //--
         char* rx_pipe; //receive pipe name handle
