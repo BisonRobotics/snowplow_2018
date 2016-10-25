@@ -1,5 +1,0 @@
-normally when processes run, their respective memory spaces are mapped to different physical address spaces. 
-shared memory is a way for multiple processes to access the same physical memory. This allows one process
-to write information to the shared pool of memory and another process to read from that same pool of shared
-memory, allowing interprocess communication. precautions must be taken to ensure that one process does not
-read too early 
