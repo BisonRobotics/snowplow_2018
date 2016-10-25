@@ -1,3 +1,11 @@
+/*
+    TODO : inline the byte swapping algorithm in conditional SWAPBYTES. would like to try asm
+    TODO : use guaranteed sized data types (uint32_t, uint8_t) in ECEF_Msg and ECEF_Data unions
+    TODO : streamline unions. combine so as to use just one
+    TODO : read GPS data directly into program. current implementation uses pipe on command line
+*/
+
+
 #include <iostream>
 
 #define SWAPBYTES
@@ -30,17 +38,17 @@ int main(int argc, char* argv[]) {
 
         #ifdef SWAPBYTES
 
-            for(int i = 1; i < 7; i++) {
+            for(int i = 1; i < 7; i++) { // change encoding of integers
                 ECEF_Data datum;
                 datum.data = myMsg.data[i];
 
-                char y = datum.db[0];
-                datum.db[0] = datum.db[3];
-                datum.db[3] = y;
+                datum.db[3] = datum.db[3] ^ datum.db[0];
+                datum.db[0] = datum.db[3] ^ datum.db[0];
+                datum.db[3] = datum.db[3] ^ datum.db[0];
 
-                y = datum.db[1];
-                datum.db[1] = datum.db[2];
-                datum.db[2] = y;
+                datum.db[2] = datum.db[2] ^ datum.db[1];
+                datum.db[1] = datum.db[2] ^ datum.db[1];
+                datum.db[2] = datum.db[2] ^ datum.db[1];
 
                 myMsg.data[i] = datum.data;
             }
