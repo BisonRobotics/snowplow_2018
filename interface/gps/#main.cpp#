@@ -8,9 +8,9 @@
 
 #include <iostream>
 #include <unistd>
+#include <stdio.h>
 
 #define SWAPBYTES
-#define SETCOMM
 
 using namespace std;
 
@@ -39,12 +39,17 @@ int setComm()
 }
 
 int main(int argc, char* argv[]) {
-
+    
+  
     cin.read(msgHeader, 540);
 
     ECEF_Msg myMsg;
     myMsg.msg[28] = 0;
 
+    uBloxGPS device;
+    int status = device.Connect("dev/ttyACM0");
+
+    if(status != 
     while(1) {
         cin.read(myMsg.msg, 28);
 
