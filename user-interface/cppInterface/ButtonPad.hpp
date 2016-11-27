@@ -33,10 +33,10 @@ ButtonPad::ButtonPad(QWidget* parent) : QWidget(parent) {
     btn4 = new QPushButton("Button 4", this);
 
     // buttons will expand to fill available space
-    btn1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    btn2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    btn3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    btn4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    btn1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    btn2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    btn3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    btn4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // special button toggles AI/Manual control
     aiBtn = new QPushButton("Toggle AI", this);

@@ -49,7 +49,6 @@ DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent) {
     grid->addWidget(fileDump,      0, 0);
     grid->addWidget(filename,      0, 1, 1, 3);
     grid->addWidget(startfiledump, 0, 4);
-
     grid->addWidget(debug,         1, 0, 3, 4);
     grid->addWidget(cleardebug,    2, 4);
 

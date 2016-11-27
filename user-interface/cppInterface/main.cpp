@@ -1,17 +1,16 @@
 #include <QApplication>
 #include <QWidget>
 
-//#include "ButtonPad.hpp"
-//#include "SliderWheel.hpp"
-//#include "DebugConsole.hpp"
 #include "MainInterface.hpp"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
+    // for embedding other threaded applications:
+    app.setAttribute(Qt::AA_X11InitThreads, true);
 
     MainInterface window;
     window.setWindowTitle("Snowplow Interface");
-    window.resize(640, 480); // x, y
+    //window.resize(640, 480); // x, y
     window.show();
 
     return app.exec();
