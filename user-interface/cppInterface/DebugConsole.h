@@ -19,6 +19,7 @@ public:
 public slots:
     void append(const QString& text);
     void clearDebugWindow(void);
+    void fileDumpMsg(void);
 private:
     QLabel* fileDump;
     QLineEdit* filename;

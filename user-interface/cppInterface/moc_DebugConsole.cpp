@@ -22,7 +22,7 @@ static const uint qt_meta_data_DebugConsole[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -32,13 +32,14 @@ static const uint qt_meta_data_DebugConsole[] = {
  // slots: signature, parameters, type, tag, flags
       19,   14,   13,   13, 0x0a,
       35,   13,   13,   13, 0x0a,
+      54,   13,   13,   13, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_DebugConsole[] = {
     "DebugConsole\0\0text\0append(QString)\0"
-    "clearDebugWindow()\0"
+    "clearDebugWindow()\0fileDumpMsg()\0"
 };
 
 void DebugConsole::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -49,6 +50,7 @@ void DebugConsole::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         switch (_id) {
         case 0: _t->append((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 1: _t->clearDebugWindow(); break;
+        case 2: _t->fileDumpMsg(); break;
         default: ;
         }
     }
@@ -86,9 +88,9 @@ int DebugConsole::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }
