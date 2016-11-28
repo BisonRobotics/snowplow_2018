@@ -1,28 +1,5 @@
-#ifndef __JCC__DEBUGCONSOLE__HPP__
-#define __JJC__DEBUGCONSOLE__HPP__
 
-#include <QSlider>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QTime>
-#include <QTextEdit>
-#include <QLCDNumber>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QTextEdit> // for outputting debug info
-
-class DebugConsole : public QWidget {
-public:
-    DebugConsole(QWidget* parent = 0);
-private:
-    QLabel* fileDump;
-    QLineEdit* filename;
-    QTextEdit* debug;
-
-    QPushButton* startfiledump;
-    QPushButton* cleardebug;
-};
+#include "DebugConsole.h"
 
 DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent) {
     QGridLayout* grid = new QGridLayout();
@@ -33,6 +10,8 @@ DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent) {
     debug         = new QTextEdit(this);
     startfiledump = new QPushButton("Begin file dump", this);
     cleardebug    = new QPushButton("Clear debug window", this);
+
+    connect(cleardebug, SIGNAL(clicked()), this, SLOT(clearDebugWindow())); // local signal
 
     // QTextEdit window will be read-only
     debug->setReadOnly(true);
@@ -53,7 +32,16 @@ DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent) {
     grid->addWidget(cleardebug,    2, 4);
 
     setLayout(grid);
-
 }
 
-#endif // __JCC__DEBUGCONSOLE__HPP__
+void DebugConsole::append(const QString& text) {
+    debug->textCursor().insertHtml(text);
+    debug->textCursor().insertText(QString('\n'));
+    debug->textCursor().movePosition(QTextCursor::End);
+    debug->setTextCursor(debug->textCursor());
+}
+
+void DebugConsole::clearDebugWindow(void) {
+    debug->clear();
+    append(QString("<font style=\"color:#00FFFF\">[debug] debug window cleared </font>"));
+}

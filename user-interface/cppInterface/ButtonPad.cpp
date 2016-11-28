@@ -1,7 +1,4 @@
-#ifndef __JJC__BUTTONPAD__HPP__
-#define __JJC__BUTTONPAD__HPP__
-
-#include <QWidget>
+/*#include <QWidget>
 #include <QSlider>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -10,17 +7,8 @@
 #include <QTextEdit>
 #include <QLCDNumber>
 #include <QPushButton>
-
-class ButtonPad : public QWidget {
-public:
-    ButtonPad(QWidget* parent = 0);
-private:
-    QPushButton* btn1;
-    QPushButton* btn2;
-    QPushButton* btn3;
-    QPushButton* btn4;
-    QPushButton* aiBtn;
-};
+*/
+#include "ButtonPad.h"
 
 ButtonPad::ButtonPad(QWidget* parent) : QWidget(parent) {
     QGridLayout* grid = new QGridLayout();
@@ -41,6 +29,7 @@ ButtonPad::ButtonPad(QWidget* parent) : QWidget(parent) {
     // special button toggles AI/Manual control
     aiBtn = new QPushButton("Toggle AI", this);
     aiBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(aiBtn, SIGNAL(clicked()), this, SLOT(toggleAI()));
     grid->addWidget(aiBtn, 0, 2, 2, 1);
 
     // add pushbuttons to grid layout
@@ -52,4 +41,11 @@ ButtonPad::ButtonPad(QWidget* parent) : QWidget(parent) {
     setLayout(grid);
 }
 
-#endif // __JJC__BUTTONPAD__HPP__
+void ButtonPad::toggleAI(void) {
+    isAI = !isAI;
+    if(isAI) {
+        emit sendAIToggleMessage(QString("<font style=\"color:#FF00FF\">[AI_t] AI toggled: on</font>"));
+    } else {
+        emit sendAIToggleMessage(QString("<font style=\"color:#FF00FF\">[AI_t] AI toggled: off</font>"));
+    }
+}
