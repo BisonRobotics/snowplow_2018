@@ -1,29 +1,30 @@
 import time
 import serial
 
-ser = serial.Serial(
-	port='/dev/ttyS0',
-	baudrate=115200,
-	parity=serial.PARITY_ODD,
-    	stopbits=serial.STOPBITS_TWO,
-    	bytesize=serial.EIGHTBITS
-)
+def main(argv):
+	ser = serial.Serial(
+            port='/dev/ttyS0',
+            baudrate=115200,
+            parity=serial.PARITY_ODD,
+            stopbits=serial.STOPBITS_TWO,
+            bytesize=serial.EIGHTBITS
+        )
 
-ser.open
-ser.isOpen()
+        ser.open
+        ser.isOpen()
 
-ser.write('^RWD 0\r\n')
-time.sleep(1)
+        ser.write('^RWD 0\r\n')
+        time.sleep(1)
 
-#Both motors foward
-ser.write('!G 1 -200\r\n')
-ser.write('!G 2 200\r\n')
+        #Both motors foward
+        ser.write('!G 1 -200\r\n')
+        ser.write('!G 2 200\r\n')
 
-time.sleep(5)
+        time.sleep(5)
 
-#turn off motors
-ser.write('!G 1 0\r\n')
-ser.write('!G 2 0\r\n')
+        #turn off motors
+        ser.write('!G 1 0\r\n')
+        ser.write('!G 2 0\r\n')
 
 
-ser.close
+        ser.close
