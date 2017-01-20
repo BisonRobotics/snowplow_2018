@@ -29,7 +29,7 @@ class PythonServer:
 
 def main():
 
-    server = PythonServer('10.42.0.1', 8091)
+    server = PythonServer('10.42.0.1', 8090)
     server.s.settimeout(0) # wait no longer than this many seconds when reading
 
     # open xbox controller

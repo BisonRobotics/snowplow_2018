@@ -7,8 +7,11 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <iostream>
+#include <vector>
+#include <string>
 
 #include "TCPSocket.hpp"
+#include "RS232_Serial.hpp"
 
 using namespace std;
 using namespace JJC;
@@ -19,6 +22,14 @@ typedef struct {
     int A = 0;
     int B = 0;
 } buttonData;
+
+int leftMotorSpeed;
+int rightMotorSpeed;
+
+void initMotorController(CppSerial cs) {
+    char* resetWD = "^RWD 0\n";
+    cs.writeBuffer(resetWD, strlen(resetWD));
+}
 
 int main(int argc, char* argv[]) {
 
@@ -33,6 +44,18 @@ int main(int argc, char* argv[]) {
     char* recvData = nullptr;
 
     buttonData bd;
+
+    leftMotorSpeed  = 0;
+    rightMotorSpeed = 0;
+
+    // RS-232 communications
+    CppSerial cs("/dev/ttyUSB0");
+    cs.set_BaudRate(B115200);
+    cs.set_ParityDisable(); // no parity bit
+    cs.set_StopBit1();      // one stop bit
+    cs.set_WordSize8();     // 8-bit word
+    cs.set_Start();         // save configuration
+    initMotorController(cs);
 
     while(1) {
 
@@ -79,6 +102,16 @@ int main(int argc, char* argv[]) {
             printf("Ly: %3.3f, Lr: %3.3f, A: %d, B: %d\n", bd.leftY, bd.rightY, bd.A, bd.B);
 
         delete[] r; // last operation will always be a write
+
+        float leftTemp  = bd.leftY * 2000.0;
+        float rightTemp = bd.rightY * 2000.0;
+        leftMotorSpeed  = (int)leftTemp;
+        rightMotorSpeed = (int)rightTemp;
+        leftMotorSpeed -= 1000;
+        rightMotorSpeed -= 1000;
+
+        string rCom = "!G " + to_string(rightMotorSpeed) + '\n';
+        cs.writeBuffer((char*)rCom.c_str(), strlen(rCom.c_str()));
 
     }
 
