@@ -1,5 +1,14 @@
-volatile short pulseCount1;
-volatile short pulseCount2;  
+
+int16_t pulseCount1;
+int16_t pulseCount2;  
+
+union int16union {
+  int16_t sh;
+  byte buf[2];
+};
+
+int16union outBuf;
+
 void setup() {
   Serial.begin(9600);
   pinMode(2,INPUT);
@@ -14,18 +23,15 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if (Serial.available()){
-     byte echo = Serial.read();
-     Serial.write(echo);
-    if (echo == '!'){
-      Serial.write(pulseCount1); //for binary
-      //Serial.print(pulseCount1); //for ASCI
+      byte echo = Serial.read();
+      
+      outBuf.sh = pulseCount1;
+      Serial.write(outBuf.buf, 2);
       pulseCount1 = 0;
-      //Serial.print(",");
-      Serial.write(pulseCount2);
-      //Serial.Print(pulseCount2);
+      
+      outBuf.sh = pulseCount2;
+      Serial.write(outBuf.buf, 2);
       pulseCount2 = 0;
-      //Serial.print(" \n");
-    }
   }
   
 }

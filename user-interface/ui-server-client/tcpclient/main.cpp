@@ -34,7 +34,7 @@ void initMotorController(CppSerial cs) {
 int main(int argc, char* argv[]) {
 
     //TCP::Socket<messageData> mysocket("www.google.com", 80);
-    TCP::Socket<void> mysocket("localhost", 8092);
+    TCP::Socket<void> mysocket("192.168.12.109", 8090);
     //TCP::Socket<messageData> mysocket("1.1.4.5", 8089)
 
     cout << "Connection success!\n";
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     rightMotorSpeed = 0;
 
     // RS-232 communications
-    CppSerial cs("/dev/ttyUSB0");
+    CppSerial cs("/dev/ttyACM1");
     cs.set_BaudRate(B115200);
     cs.set_ParityDisable(); // no parity bit
     cs.set_StopBit1();      // one stop bit
