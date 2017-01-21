@@ -9,7 +9,7 @@ def fmtFloat(n):
 def fmtInt(n):
     return '{:d}'.format(n)
 
-controllGain = 400
+controllGain = 500
     
 joy = xbox.Joystick()
 
@@ -61,8 +61,8 @@ cR = 0
 cL = 0
 
 while not joy.Back():
-	XR = - controllGain * (joy.rightY())
-	XL = controllGain * (joy.leftY())
+	XR = controllGain * (joy.rightY())
+	XL = - controllGain * (joy.leftY())
 	
 	#cR = XR 
 	#cL = XL
@@ -74,8 +74,8 @@ while not joy.Back():
 
 	print chr(13),
 
-	ser.write('!G 2 ' + XR + '\r\n')
-	ser.write('!G 1 ' + XL + '\r\n')
+	ser.write('!G 1 ' + XR + '\r\n')
+	ser.write('!G 2 ' + XL + '\r\n')
 
 ser.write('!G 1 0\r\n')
 ser.write('!G 2 0\r\n')

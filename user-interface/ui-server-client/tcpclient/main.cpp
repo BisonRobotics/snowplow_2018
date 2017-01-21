@@ -34,7 +34,7 @@ void initMotorController(CppSerial cs) {
 int main(int argc, char* argv[]) {
 
     //TCP::Socket<messageData> mysocket("www.google.com", 80);
-    TCP::Socket<void> mysocket("192.168.12.109", 8090);
+    TCP::Socket<void> mysocket("192.168.12.171", 8096);
     //TCP::Socket<messageData> mysocket("1.1.4.5", 8089)
 
     cout << "Connection success!\n";
@@ -49,10 +49,10 @@ int main(int argc, char* argv[]) {
     rightMotorSpeed = 0;
 
     // RS-232 communications
-    CppSerial cs("/dev/ttyACM1");
+    CppSerial cs("/dev/ttyS0");
     cs.set_BaudRate(B115200);
-    cs.set_ParityDisable(); // no parity bit
-    cs.set_StopBit1();      // one stop bit
+    cs.set_ParityOdd();     // odd parity
+    cs.set_StopBit2();      // two stop bits
     cs.set_WordSize8();     // 8-bit word
     cs.set_Start();         // save configuration
     initMotorController(cs);
@@ -98,21 +98,27 @@ int main(int argc, char* argv[]) {
             print = true;
         }
 
-        if(print)
-            printf("Ly: %3.3f, Lr: %3.3f, A: %d, B: %d\n", bd.leftY, bd.rightY, bd.A, bd.B);
+//        if(print)
+//            printf("Ly: %3.3f, Lr: %3.3f, A: %d, B: %d\n", bd.leftY, bd.rightY, bd.A, bd.B);
 
         delete[] r; // last operation will always be a write
 
-        float leftTemp  = bd.leftY * 2000.0;
-        float rightTemp = bd.rightY * 2000.0;
+        float leftTemp  = bd.leftY * 1000.0;
+        float rightTemp = bd.rightY * 1000.0;
         leftMotorSpeed  = (int)leftTemp;
         rightMotorSpeed = (int)rightTemp;
-        leftMotorSpeed -= 1000;
+        leftMotorSpeed  -= 1000;
         rightMotorSpeed -= 1000;
 
-        string rCom = "!G " + to_string(rightMotorSpeed) + '\n';
+	leftMotorSpeed  *= -1; // just this side needs to be multiplied
+
+        string rCom = "!G 1 " + to_string(rightMotorSpeed) + '\n';
         cs.writeBuffer((char*)rCom.c_str(), strlen(rCom.c_str()));
 
+	string lCom = "!G 2 " + to_string(leftMotorSpeed) + '\n';
+	cs.writeBuffer((char*)lCom.c_str(), strlen(lCom.c_str()));
+
+	cout << "Command string: " << rCom << lCom << endl;
     }
 
     return 0;

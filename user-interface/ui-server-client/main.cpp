@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     messageData md;
 
     //TCP::Socket<messageData> mysocket("www.google.com", 80);
-    TCP::Socket<MsgData> mysocket("10.42.0.1", 8090);
+    TCP::Socket<MsgData> mysocket("192.168.12.109", 8090);
     //TCP::Socket<messageData> mysocket("1.1.4.5", 8089)
     cout << "Buffer size: " << mysocket.getBufferSize() << endl;
 
