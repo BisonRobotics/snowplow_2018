@@ -2,19 +2,36 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h> // for getting timestamps
+
 #include <netinet/in.h>
 #include <netdb.h>
+
+// C++ libs
 #include <iostream>
 #include <vector>
 #include <string>
+#include <thread>
+#include <mutex>
 
 #include "TCPSocket.hpp"
 #include "RS232_Serial.hpp"
+#include "LinkedListLiteral.h"
 
 using namespace std;
 using namespace JJC;
+
+typedef struct {
+    char status; // r/R = regular operation, e/E = emergency stop
+    int lDat;
+    int rDat;
+} motorData;
+
+LinkedList<motorData> llQ; // queue of motor commands, cmds added to end, taken from beginning
+mutex mtx; // for controlling access to cmd queue
 
 typedef struct {
     float leftY;
@@ -29,6 +46,44 @@ int rightMotorSpeed;
 void initMotorController(CppSerial cs) {
     char* resetWD = "^RWD 0\n";
     cs.writeBuffer(resetWD, strlen(resetWD));
+}
+
+uint64_t getTimeStamp(void) {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec*(uint64_t)1000000 + tv.tv_usec;
+}
+
+void t_nextThread(void) {
+    // RS-232 communications
+    CppSerial cs("/dev/ttyS0");
+    cs.set_BaudRate(B115200);
+    cs.set_ParityOdd();     // odd parity
+    cs.set_StopBit2();      // two stop bits
+    cs.set_WordSize8();     // 8-bit word
+    cs.set_Start();         // save configuration
+    initMotorController(cs);
+
+    motorData md;
+
+    while(1) {
+        if(llQ.getSize() > 0) {
+            mtx.lock();
+            md = llQ.at(0); // retrieve first element in queue
+            llQ.removeBegin();
+            mtx.unlock();
+
+            cout << "Cmd available: ";
+
+            string rCom = "!G 1 " + to_string(md.rDat) + '\n';
+            string lCom = "!G 2 " + to_string(md.lDat) + '\n';
+
+            cs.writeBuffer((char*)rCom.c_str(), strlen(rCom.c_str()));
+            cs.writeBuffer((char*)lCom.c_str(), strlen(lCom.c_str()));
+
+            cout << "Command strings: \n" << rCom << lCom << endl;
+        }
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -48,14 +103,7 @@ int main(int argc, char* argv[]) {
     leftMotorSpeed  = 0;
     rightMotorSpeed = 0;
 
-    // RS-232 communications
-    CppSerial cs("/dev/ttyS0");
-    cs.set_BaudRate(B115200);
-    cs.set_ParityOdd();     // odd parity
-    cs.set_StopBit2();      // two stop bits
-    cs.set_WordSize8();     // 8-bit word
-    cs.set_Start();         // save configuration
-    initMotorController(cs);
+    motorData md;
 
     while(1) {
 
@@ -110,15 +158,15 @@ int main(int argc, char* argv[]) {
         leftMotorSpeed  -= 1000;
         rightMotorSpeed -= 1000;
 
-	leftMotorSpeed  *= -1; // just this side needs to be multiplied
+        leftMotorSpeed  *= -1; // just this side needs to be multiplied
 
-        string rCom = "!G 1 " + to_string(rightMotorSpeed) + '\n';
-        cs.writeBuffer((char*)rCom.c_str(), strlen(rCom.c_str()));
+        md.lDat = leftMotorSpeed;
+        md.rDat = rightMotorSpeed;
 
-	string lCom = "!G 2 " + to_string(leftMotorSpeed) + '\n';
-	cs.writeBuffer((char*)lCom.c_str(), strlen(lCom.c_str()));
+        mtx.lock();
+        llQ.addToEnd(md); // add elememt to queue
+        mtx.unlock();
 
-	cout << "Command string: " << rCom << lCom << endl;
     }
 
     return 0;
