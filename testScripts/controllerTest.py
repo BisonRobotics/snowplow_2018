@@ -9,7 +9,7 @@ def fmtFloat(n):
 def fmtInt(n):
     return '{:d}'.format(n)
 
-controllGain = 200
+controllGain = 400
     
 joy = xbox.Joystick()
 
