@@ -33,7 +33,7 @@ void glWidgetConsole::paintGL() {
     static int numFrames = 0;
     //std::cout << "\tpaintGL called: " << numFrames << std::endl; // debug info
     if(!(numFrames % 20)) // approx 1/sec
-        emit sendGLMessage(QString("<font style=\"color:#FF0000\">[O_GL] GL Frame Update Recieved</font>")); // send to integrated debug console
+        emit sendGLMessage(QString("[O_GL] GL Frame Update Recieved"), 255, 0, 0); // send to integrated debug console
 
     numFrames++;
 

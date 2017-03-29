@@ -19,8 +19,8 @@ MainInterface::MainInterface(QWidget* parent) : QWidget(parent) {
     debug    = new DebugConsole();
     opengl   = new glWidgetConsole();
 
-    connect(opengl, SIGNAL(sendGLMessage(QString)),       debug, SLOT(append(QString))); // debug msgs from OpenGL-Widget
-    connect(bpad,   SIGNAL(sendAIToggleMessage(QString)), debug, SLOT(append(QString))); // debug msgs from ButtonPad
+    connect(opengl, SIGNAL(sendGLMessage(QString, int, int, int)),       debug, SLOT(append(QString, int, int, int))); // debug msgs from OpenGL-Widget
+    connect(bpad,   SIGNAL(sendAIToggleMessage(QString, int, int, int)), debug, SLOT(append(QString, int, int, int))); // debug msgs from ButtonPad
 
     bpad->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     tabs->setFixedSize(800, 500);

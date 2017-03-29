@@ -1,6 +1,8 @@
 
 #include "DebugConsole.h"
 
+#include <QFile>
+
 DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent) {
     QGridLayout* grid = new QGridLayout();
 
@@ -35,8 +37,9 @@ DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent) {
     setLayout(grid);
 }
 
-void DebugConsole::append(const QString& text) {
-    debug->textCursor().insertHtml(text);
+void DebugConsole::append(const QString& text, int r, int g, int b) {
+    debug->setTextColor(QColor(r, g, b));
+    debug->textCursor().insertText(text);
     debug->textCursor().insertText(QString('\n'));
     debug->textCursor().movePosition(QTextCursor::End);
     debug->setTextCursor(debug->textCursor());
@@ -44,19 +47,25 @@ void DebugConsole::append(const QString& text) {
 
 void DebugConsole::clearDebugWindow(void) {
     debug->clear();
-    append(QString("<font style=\"color:#00FFFF\">[debug] debug window cleared </font>"));
+    append(QString("[debug] debug window cleared"), 255, 255, 0);
 }
 
 void DebugConsole::fileDumpMsg(void) {
-    append(QString("<font style=\"color:#0000FF\">[f_dump] file dump initiated </font>"));
+    append(QString("[f_dump] file dump initiated"), 0, 255, 0);
     QString contents = debug->toHtml();
     QString file     = filename->text();
     if(file.isEmpty()) {
-        append(QString("<font style=\"color:#0000FF\">[f_dump] no file name given </font>"));
+        append(QString("[f_dump] no file name given"), 0, 255, 0);
         return;
     }
     QFile doc(file);
-    doc.write(contents);
+    if(!doc.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        append(QString("[f_dump] failed to create file"), 0, 255, 0);
+        return;
+    }
+    doc.write(contents.toLocal8Bit());
+    append(QString("[f_dump] file dump complete"), 0, 255, 0);
+    doc.close();
 }
 
 

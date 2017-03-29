@@ -1,0 +1,8 @@
+#!/bin/bash/
+
+echo "B56206010800F0000000000000010024" | xxd -r -p > /dev/ttyACM0
+echo "B56206010800F001000000000001012B" | xxd -r -p > /dev/ttyACM0
+echo "B56206010800F0020000000000010232" | xxd -r -p > /dev/ttyACM0
+echo "B56206010800F0030000000000010339" | xxd -r -p > /dev/ttyACM0
+echo "B56206010800F0040000000000010440" | xxd -r -p > /dev/ttyACM0
+echo "B56206010800F0050000000000010547" | xxd -r -p > /dev/ttyACM0

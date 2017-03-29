@@ -31,7 +31,7 @@ public slots:
     void updateGL(void);
 
 signals:
-    void sendGLMessage(const QString& text);
+    void sendGLMessage(const QString& text, int r, int g, int b);
 
 protected:
     void initializeGL();

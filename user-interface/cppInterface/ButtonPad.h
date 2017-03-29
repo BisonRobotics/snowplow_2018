@@ -18,7 +18,7 @@ public:
 public slots:
     void toggleAI(void);
 signals:
-    void sendAIToggleMessage(const QString& text);
+    void sendAIToggleMessage(const QString& text, int r, int g, int b);
 private:
     QPushButton* btn1;
     QPushButton* btn2;

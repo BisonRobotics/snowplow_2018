@@ -44,8 +44,8 @@ ButtonPad::ButtonPad(QWidget* parent) : QWidget(parent) {
 void ButtonPad::toggleAI(void) {
     isAI = !isAI;
     if(isAI) {
-        emit sendAIToggleMessage(QString("<font style=\"color:#FF00FF\">[AI_t] AI toggled: on</font>"));
+        emit sendAIToggleMessage(QString("[AI_t] AI toggled: on"), 255, 0, 255);
     } else {
-        emit sendAIToggleMessage(QString("<font style=\"color:#FF00FF\">[AI_t] AI toggled: off</font>"));
+        emit sendAIToggleMessage(QString("[AI_t] AI toggled: off"), 255, 0, 255);
     }
 }

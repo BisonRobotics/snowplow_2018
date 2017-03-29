@@ -30,16 +30,17 @@ static const uint qt_meta_data_ButtonPad[] = {
        1,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
-      16,   11,   10,   10, 0x05,
+      22,   11,   10,   10, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      45,   10,   10,   10, 0x0a,
+      63,   10,   10,   10, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_ButtonPad[] = {
-    "ButtonPad\0\0text\0sendAIToggleMessage(QString)\0"
+    "ButtonPad\0\0text,r,g,b\0"
+    "sendAIToggleMessage(QString,int,int,int)\0"
     "toggleAI()\0"
 };
 
@@ -49,7 +50,7 @@ void ButtonPad::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         Q_ASSERT(staticMetaObject.cast(_o));
         ButtonPad *_t = static_cast<ButtonPad *>(_o);
         switch (_id) {
-        case 0: _t->sendAIToggleMessage((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 0: _t->sendAIToggleMessage((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])),(*reinterpret_cast< int(*)>(_a[4]))); break;
         case 1: _t->toggleAI(); break;
         default: ;
         }
@@ -96,9 +97,9 @@ int ButtonPad::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void ButtonPad::sendAIToggleMessage(const QString & _t1)
+void ButtonPad::sendAIToggleMessage(const QString & _t1, int _t2, int _t3, int _t4)
 {
-    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)), const_cast<void*>(reinterpret_cast<const void*>(&_t4)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 QT_END_MOC_NAMESPACE

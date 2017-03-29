@@ -30,15 +30,16 @@ static const uint qt_meta_data_DebugConsole[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      19,   14,   13,   13, 0x0a,
-      35,   13,   13,   13, 0x0a,
-      54,   13,   13,   13, 0x0a,
+      25,   14,   13,   13, 0x0a,
+      53,   13,   13,   13, 0x0a,
+      72,   13,   13,   13, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_DebugConsole[] = {
-    "DebugConsole\0\0text\0append(QString)\0"
+    "DebugConsole\0\0text,r,g,b\0"
+    "append(QString,int,int,int)\0"
     "clearDebugWindow()\0fileDumpMsg()\0"
 };
 
@@ -48,7 +49,7 @@ void DebugConsole::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         Q_ASSERT(staticMetaObject.cast(_o));
         DebugConsole *_t = static_cast<DebugConsole *>(_o);
         switch (_id) {
-        case 0: _t->append((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 0: _t->append((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])),(*reinterpret_cast< int(*)>(_a[4]))); break;
         case 1: _t->clearDebugWindow(); break;
         case 2: _t->fileDumpMsg(); break;
         default: ;

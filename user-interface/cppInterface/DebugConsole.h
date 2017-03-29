@@ -17,7 +17,7 @@ Q_OBJECT
 public:
     DebugConsole(QWidget* parent = 0);
 public slots:
-    void append(const QString& text);
+    void append(const QString& text, int r, int g, int b);
     void clearDebugWindow(void);
     void fileDumpMsg(void);
 private:
