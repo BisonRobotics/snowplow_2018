@@ -36,6 +36,7 @@ public:
     // constructor with serial port as argument
     SerialController(const char* serialPort);
 
+    // specify a serial device to use
     void set_SerialPort(const char* serialPort);
 
     // read a certain number of bytes from the serial port
