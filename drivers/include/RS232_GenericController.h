@@ -59,6 +59,8 @@ public:
 
     // start serial communications
     void start(void);
+
+    int get_FileDescriptor(void);
 };
 
 #endif // __JJC__RS232GENERIC__H__

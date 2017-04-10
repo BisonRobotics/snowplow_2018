@@ -25,7 +25,7 @@ all: test_rs232 test_GPS
 # every library has a test here
 
 test_rs232: rs232
-	$(info building object for rs232 test)
+	$(info --  building rs232 test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/rs232.cpp -I$(INCLUDE)/ $(STDOPTS)
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o -I$(INCLUDE)/ $(STDOPTS)
 
