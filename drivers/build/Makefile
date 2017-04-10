@@ -11,6 +11,7 @@ SRC     = ../src
 OBJS    = obj
 BINS    = bin
 STDOPTS = -lpthread -lncurses -std=c++11
+TESTSRC = $(SRC)/test
 
 ALLOBJS =  $(OBJS)/rs232.o
 ALLOBJS += $(OBJS)/tcp.o
@@ -18,8 +19,15 @@ ALLOBJS += $(OBJS)/tcp.o
 final: rs232 gps tcp
 	$(info nothing to do for final executable... yet)
 
+all: test_rs232 test_GPS
+	# build every test
+
+# every library has a test here
+
 test_rs232: rs232
-	$(info no test for serial controller)
+	$(info building object for rs232 test)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/rs232.cpp -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o -I$(INCLUDE)/ $(STDOPTS)
 
 test_GPS: gps
 	$(info no test for GPS)

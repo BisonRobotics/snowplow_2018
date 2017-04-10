@@ -20,10 +20,18 @@ SC::SerialController(const char* serialPort) {
 void SC::set_SerialPort(const char* serialPort) {
     memset(&tty, 0, sizeof tty);
     fd = open(serialPort, O_RDWR | O_NOCTTY | O_NDELAY); // pretty standard flags
-    if(tcgetattr(fd, &tty) < 0) {
+    if(fd < 0) {
+        int e = errno;
         std::cerr << "Error opening file" << std::endl;
-        std::cerr << "Does " << serialPort << " exist?" << std::endl;
-        exit(-1);
+        std::cerr << "    Error code: " << e << std::endl;
+        //exit(-1);
+    }
+
+    if(tcgetattr(fd, &tty) < 0) {
+        int e = errno;
+        std::cerr << "Error retrieving attributes" << std::endl;
+        std::cerr << "    Error code: " << e << std::endl;
+        //exit(-1);
     }
     serialPortSet = true;
 }
@@ -102,7 +110,7 @@ void SerialController::start(void) {
 
     if(tcsetattr(fd, TCSANOW, &tty) != 0) {
         std::cerr << "Error starting serial communications" << std::endl;
-        std::cerr << "Error code: " << errno << std::endl;
+        std::cerr << "    Error code: " << errno << std::endl;
         exit(-1);
     }
 }
