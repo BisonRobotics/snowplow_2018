@@ -3,6 +3,8 @@
 #include <thread>
 #include <vector>
 #include <string>
+
+#include "KeyboardEvent.h"
 #include "RS232_Serial.hpp"
 #include "NamedPipeUtility.h"
 
@@ -10,19 +12,40 @@
 
 using namespace std;
 
-typedef struct {
-
-int rightMotorSpeed;
-int leftMotorSpeed;
-
-} motorControlStructure;
-
 void initMotorController(CppSerial cs) {
-    char* resetWD = "^RWD 0\n";
+    char* resetWD = "^RWD 1000\n";
     cs.writeBuffer(resetWD, strlen(resetWD));
 }
 
-void trackThread(void) {
+int leftMotor = 0;
+int riteMotor = 0;
+bool quitLoop = false;
+
+void keyPressed(SDLKey key) {
+    switch(key) {
+        // right motor
+        case 'w':
+            riteMotor += 100;
+            break;
+        case 's':
+            riteMotor -= 100;
+            break;
+        // left motor
+        case 'q':
+            leftMotor += 100;
+            break;
+        case 'a':
+            leftMotor -= 100;
+            break;
+        case 'p':
+            quitLoop = true;
+            break;
+        default:
+            break;
+    }
+}
+
+int main(int argc, char* argv[]) {
 
     CppSerial cs("/dev/ttyUSB0");
     cs.set_BaudRate(B115200);
@@ -33,40 +56,25 @@ void trackThread(void) {
 
     initMotorController(cs);
 
-    int currentMotor = 0;
-    for(;;) {
-        if(currentMotor > motorWanted)
-            currentMotor -= 4;
-        if(currentMotor < motorWanted)
-            currentMotor += 4;
-        timedMotorAdjust = currentMotor;
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Surface* screen = SDL_SetVideoMode(200, 200, 32, SDL_HWACCEL);
 
-        if(needMotorControllerHandshake) {
-            cs.set_Start();
-            initMotorController(cs);
-            needMotorControllerHandshake = false;
+    KeyboardEventHandler keh;
+    keh.setKeyPressedCallback(keyPressed);
 
-            cout << "motor controller handshake completed" << endl;
-        }
+    while(!quitLoop) {
+        keh.loopEvents();
+        system("clear");
+        cout << "Motor speeds:" << endl;
+        cout << "\tLeft:  " << leftMotor << endl;
+        cout << "\tRight: " << riteMotor << endl << endl;
 
-        if(hasMotorControl) {
-            string buf = "!G " + to_string(currentMotor) + '\n';
-            cs.writeBuffer((char*)buf.c_str(), strlen(buf.c_str()));
-        } else {
-            currentMotor = 0;
-            cs.writeBuffer("!G 0\n", strlen("!G 0\n")); // emergency stop
-        }
+        string command1 = "!G 2 " + to_string(-1 * leftMotor) + '\n';
+        string command2 = "!G 1 " + to_string(riteMotor)      + '\n';
 
-        SDL_Delay(10);
+        cs.writeBuffer((char*)command1.c_str(), command1.length());
+        cs.writeBuffer((char*)command2.c_str(), command2.length());
     }
-
-}
-
-int main(int argc, char* argv[]) {
-
-    int motorSpeed = 0;
-
-
 
     return 0;
 }
