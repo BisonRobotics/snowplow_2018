@@ -12,8 +12,8 @@ using namespace std;
 
 typedef struct {
 
-int rightMotorSpeed;
-int leftMotorSpeed;
+	int rightMotorSpeed;
+	int leftMotorSpeed;
 
 } motorControlStructure;
 

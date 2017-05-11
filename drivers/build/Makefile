@@ -10,16 +10,17 @@ INCLUDE = ../include
 SRC     = ../src
 OBJS    = obj
 BINS    = bin
-STDOPTS = -lpthread -lncurses -std=c++11
+STDOPTS = -w -lpthread -lncurses -std=c++11
+MISCLIB = $(SRC)/misc-libs
 TESTSRC = $(SRC)/test
-
 ALLOBJS =  $(OBJS)/rs232.o
 ALLOBJS += $(OBJS)/tcp.o
+ALLOBJS += $(OBJS)/xbox.o
 
-final: rs232 gps tcp
+final: rs232 gps tcp xbox
 	$(info nothing to do for final executable... yet)
 
-all: test_rs232 test_GPS
+all: test_rs232 test_GPS test_xBox
 	# build every test
 
 # every library has a test here
@@ -32,6 +33,13 @@ test_rs232: rs232
 test_GPS: gps
 	$(info no test for GPS)
 
+test_xBox: xbox
+	$(info --  building color object used by test_xBox target)
+	$(CXX) -c -o $(MISCLIB)/color.o $(MISCLIB)/Colors.cpp
+	$(info --  building xBox controller test program)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/xboxcontroller.cpp -I$(INCLUDE)/ $(STDOPTS) -I$(MISCLIB)/ -lSDL
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/xbox.o $(MISCLIB)/color.o -I$(INCLUDE)/ $(STDOPTS) -lSDL
+
 # rules for all of the individual object files that need to be linked in final executable
 
 rs232: $(SRC)/RS232_GenericController.cpp
@@ -42,3 +50,6 @@ gps:
 
 tcp: $(SRC)/TCP_Connection.cpp
 	$(CXX) -c -o $(OBJS)/tcp.o -I$(INCLUDE)/ $(SRC)/TCP_Connection.cpp $(STDOPTS)
+
+xbox: $(SRC)/XboxControllerInterface.cpp
+	$(CXX) -c -o $(OBJS)/xbox.o -I$(INCLUDE)/ $(SRC)/XboxControllerInterface.cpp $(STDOPTS) -I$(MISCLIB)/ -lSDL
