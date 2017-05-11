@@ -3,16 +3,16 @@
 
 #include <SDL/SDL.h>
 
-enum STICK {
-    LEFT, RIGHT
-};
-
 class XboxController {
 public:
     // empty constructor
     XboxController(void) { }
 
     void update(void);
+
+    enum STICK {
+        LEFT, RIGHT
+    };
 
     int16_t getJoyX(STICK s);
     int16_t getJoyY(STICK s);

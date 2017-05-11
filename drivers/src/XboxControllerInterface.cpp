@@ -35,20 +35,20 @@ void XboxController::update(void) {
     }
 }
 
-int16_t XboxController::getJoyX(STICK s) {
+int16_t XboxController::getJoyX(XboxController::STICK s) {
     switch(s) {
-        case STICK::LEFT:
+        case XboxController::STICK::LEFT:
             return leftJoystickX;
-        case STICK::RIGHT:
+        case XboxController::STICK::RIGHT:
             return rightJoystickX;
     }
 }
 
-int16_t XboxController::getJoyY(STICK s) {
+int16_t XboxController::getJoyY(XboxController::STICK s) {
     switch(s) {
-        case STICK::LEFT:
+        case XboxController::STICK::LEFT:
             return leftJoystickY;
-        case STICK::RIGHT:
+        case XboxController::STICK::RIGHT:
             return rightJoystickY;
     }
 }

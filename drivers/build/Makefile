@@ -20,7 +20,7 @@ ALLOBJS += $(OBJS)/xbox.o
 final: rs232 gps tcp xbox
 	$(info nothing to do for final executable... yet)
 
-all: test_rs232 test_GPS test_xBox
+all: test_rs232 test_GPS test_xBox test_xboxMotorBridge
 	# build every test
 
 # every library has a test here
@@ -40,6 +40,12 @@ test_xBox: xbox
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/xboxcontroller.cpp -I$(INCLUDE)/ $(STDOPTS) -I$(MISCLIB)/ -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/xbox.o $(MISCLIB)/color.o -I$(INCLUDE)/ $(STDOPTS) -lSDL
 
+test_xboxMotorBridge: xbox roboteq rs232
+	$(info --  building xboxMotorBridge test program)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/xboxMotorBridge.cpp -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/xbox.o $(OBJS)/roboteq.o $(OBJS)/rs232.o $(STDOPTS) -lSDL
+
+
 # rules for all of the individual object files that need to be linked in final executable
 
 rs232: $(SRC)/RS232_GenericController.cpp
@@ -53,3 +59,6 @@ tcp: $(SRC)/TCP_Connection.cpp
 
 xbox: $(SRC)/XboxControllerInterface.cpp
 	$(CXX) -c -o $(OBJS)/xbox.o -I$(INCLUDE)/ $(SRC)/XboxControllerInterface.cpp $(STDOPTS) -I$(MISCLIB)/ -lSDL
+
+roboteq: $(SRC)/RoboteQ.cpp
+	$(CXX) -c -o $(OBJS)/roboteq.o -I$(INCLUDE)/ $(SRC)/RoboteQ.cpp $(STDOPTS)
