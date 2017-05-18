@@ -33,8 +33,14 @@ void TCP_Controller::set_PortNumber(int port) {
 }
 
 void TCP_Controller::readSocket(char* buffer, int bufSize) {
-    bzero(buffer, bufSize);
-    read(this->sockfd, buffer, bufSize);
+    //bzero(buffer, bufSize);
+    int n = read(this->sockfd, buffer, bufSize);
+
+    if(n < 0) {
+        std::cerr << "Read error" << std::endl;
+        std::cerr << "    code: " << errno << std::endl;
+    }
+
 }
 
 std::vector<char> TCP_Controller::readUntil(uint8_t flag) {
@@ -75,6 +81,7 @@ void TCP_Controller::start(void) {
 
     if (sockfd < 0) {
         std::cerr << "ERROR opening socket" << std::endl;
+        std::cerr << "    code: " << errno << std::endl;
         exit(-1);
     }
 
@@ -94,6 +101,7 @@ void TCP_Controller::start(void) {
     if (connect(sockfd,(struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         std::cerr << "ERROR connecting" << std::endl;
         std::cerr << "Hostname: " << hostname << " Port: " << port << std::endl;
+        std::cerr << "    error code: " << errno << std::endl;
         exit(-1);
     }
 }

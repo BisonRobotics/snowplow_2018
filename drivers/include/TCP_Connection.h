@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include <sys/ioctl.h>
+
 class TCP_Controller {
 public:
     // constructor that does very little
@@ -49,6 +51,16 @@ public:
     // initialize socket with information given
     // opens a streaming, persistant tcp connection
     void start(void);
+
+    void setBlocking(void) {
+        int i = 0;
+        ioctl(sockfd, FIONBIO, &i);
+    }
+
+    void setNonBlocking(void) {
+        int i = 1;
+        ioctl(sockfd, FIONBIO, &i);
+    }
 
 private:
     // private data. idk what it all does...yet

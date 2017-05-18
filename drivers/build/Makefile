@@ -10,7 +10,7 @@ INCLUDE = ../include
 SRC     = ../src
 OBJS    = obj
 BINS    = bin
-STDOPTS = -w -lpthread -lncurses -std=c++11
+STDOPTS = -w -lpthread -lncurses -std=c++11 -lm
 MISCLIB = $(SRC)/misc-libs
 TESTSRC = $(SRC)/test
 ALLOBJS =  $(OBJS)/rs232.o
@@ -42,9 +42,13 @@ test_xBox: xbox
 
 test_xboxMotorBridge: xbox roboteq rs232
 	$(info --  building xboxMotorBridge test program)
-	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/xboxMotorBridge.cpp -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/xboxMotorBridge.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/xbox.o $(OBJS)/roboteq.o $(OBJS)/rs232.o $(STDOPTS) -lSDL
 
+test_lidar: tcp lidar
+	$(info --  building SICK Lidar test program)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL
 
 # rules for all of the individual object files that need to be linked in final executable
 
@@ -62,3 +66,6 @@ xbox: $(SRC)/XboxControllerInterface.cpp
 
 roboteq: $(SRC)/RoboteQ.cpp
 	$(CXX) -c -o $(OBJS)/roboteq.o -I$(INCLUDE)/ $(SRC)/RoboteQ.cpp $(STDOPTS)
+
+lidar: $(SRC)/LidarInterface.cpp
+	$(CXX) -c -o $(OBJS)/lidar.o -I$(INCLUDE)/ $(SRC)/LidarInterface.cpp $(STDOPTS)
