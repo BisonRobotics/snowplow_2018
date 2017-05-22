@@ -5,18 +5,32 @@
 #include <iostream>
 #include <unistd.h>
 #include <fstream>
-//#include <ios.h>
+
 
 int getHeader(char *header, std::ifstream& stream);
 
 char printASCII(std::ifstream& stream);
 
+union data16
+{
+   uint16_t i;
+   char[2] msg;
+};
+
+union ECEF_data {
+    int data[4];
+    char msg[16];
+};
+
+
 int main(int argc, char* argv[])
 {
-   char msgHeader[1] = {0xB5};
+   const char msgHeader[] = {0xB5, 0x62};
    char msgID[2];
-   char msgLength[1];
+   data16 msgLength;
+   ECEF_Data posData;
    char *msg;
+   char chkSum;
 
    std::ifstream msgStream;
 
@@ -27,17 +41,36 @@ int main(int argc, char* argv[])
    for(;;)
    {
 
-	  getHeader(msgHeader, msgStream);
-  	  //msgStream.read(msgHeader, 2);
- 			  
-	  std::cout << "message " << m++ << std::endl;
+	 getHeader(msgHeader, msgStream)
 
-          //std::cout << (char) (msgHeader[1]) << (char) (msgHeader[2]) << "  ";
- 
-	  //if((unsigned int) msgHeader[1] == 0xB || msgHeader[2] == 0xB)
-	  //{
-	  //	std::cout << "\n" << std::endl;	  
-          //}
+	 std::cout << "message " << m++ << std::endl;
+         
+         msgStream.get(msgID[0]);
+         msgStream.get(msgID[1]);
+
+         msgStream.get(msgLength.msg[0]);
+         msgStream.get(msgLength.msg[1]);
+
+         msgStream.read(posData, 16);
+
+         for(int i = 1; i < 4; i++) 
+         { // change encoding of integers
+                ECEF_Data datum;
+                datum.data = posData.data[i];
+
+                datum.db[3] = datum.db[3] ^ datum.db[0];
+                datum.db[0] = datum.db[3] ^ datum.db[0];
+                datum.db[3] = datum.db[3] ^ datum.db[0];
+
+                datum.db[2] = datum.db[2] ^ datum.db[1];
+                datum.db[1] = datum.db[2] ^ datum.db[1];
+                datum.db[2] = datum.db[2] ^ datum.db[1];
+
+                myMsg.data[i] = datum.data;
+          }
+
+          msgStream.get(chkSum);
+
    }
 
 
@@ -47,35 +80,27 @@ int main(int argc, char* argv[])
 
 int getHeader(char *header, std::ifstream& stream)
 {
-    char h[1];
+    //sync message
+
+    char h[2];
 
     while(1)
     {
         stream.get(h[0]);
-	
+
 	if(h[0] == header[0])
 	{
-    	   return 1;
+           stream.get(h[1]);
+    	   if(h[1] == header[1])
+           {
+	       return 1;
+	   }
 	}
-	
+
     }
 }
 
-char* getID(std::ifstream& stream)
-{
-   char c;
-
-   stream.get(c);
-
-   switch(c)
-   {
-
-
-   }
-
-}
-
-void getData()
+void ecefPOS()
 {
 
 
