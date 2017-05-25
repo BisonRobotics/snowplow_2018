@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <unistd.h>
 #include <fstream>
@@ -12,7 +11,7 @@ private:
     char* msg[20];
 public:
     GpsInterface(void);
-    GpsInterface(std::string device); 
+    GpsInterface(std::string device);
     storeData(void);
     getECEFPOS(void);
     syncMsg(void);
