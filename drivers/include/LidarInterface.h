@@ -45,6 +45,7 @@ public:
     // get state of SICK sensor
     void getDeviceState(void);
 
+
     void printReply(void);
 
     // get reply in ASCII character array (std::vector<char>)
