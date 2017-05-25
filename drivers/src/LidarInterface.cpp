@@ -27,20 +27,21 @@ void LidarInterface::setAccessMode(USER mode) {
 }
 
 void LidarInterface::scanData(void) {
-    outputStream.open("/tmp/scanresults_ax8846");
+    std::ofstream outputStream("/tmp/scanresults_ax8846");
     sendCmd(std::string("sRN LMDscandata"));
 
     std::vector<char> reply = tc.readUntil(0x03);
+    //std::cout << "Scan Data reply recieved" << std::endl;
     reply.push_back(0x00);
     int s = reply.size() - 2;
 
     outputStream.write(&reply[1], s);
     outputStream.close();
 
-    inputStream.open("/tmp/scanresults_ax8846");
+    std::ifstream inputStream("/tmp/scanresults_ax8846");
 
     this->floatVec.clear();
-    this->floatVec.reserve(1000);
+//    this->floatVec.reserve(1000);
 
     std::string str = "";
     while(str != "DIST1")
@@ -50,7 +51,15 @@ void LidarInterface::scanData(void) {
     for(int i = 0; i < 5; i++)
         inputStream >> std::hex >> numMeas;
 
-    std::cout << numMeas << std::endl;
+    //std::cout << numMeas << std::endl;
+
+    uint16_t tShort;
+    for(int i = 0; i < numMeas; i++) {
+        inputStream >> std::hex >> tShort;
+        //std::cout << tShort << std::endl;
+        floatVec.push_back(float(tShort));
+    }
+
 }
 
 void LidarInterface::sendCmd(std::string cmd) {
@@ -67,5 +76,36 @@ void LidarInterface::sendCmd(std::string cmd) {
 std::vector<float> LidarInterface::getResults(void) {
     return this->floatVec;
 }
+
+std::vector<char> LidarInterface::getReply(void) {
+    std::vector<char> reply = tc.readUntil(0x03);
+    reply.push_back(0x00);
+    return reply;
+}
+
+void LidarInterface::run(void) {
+    sendCmd(std::string("sMN Run"));
+}
+
+void LidarInterface::getDeviceState(void) {
+    sendCmd(std::string("sRN SCdevicestate"));
+}
+
+void LidarInterface::printReply(void) {
+    std::vector<char> reply = tc.readUntil(0x03);
+    std::cout << "    " << &reply[1] << std::endl;
+    reply.clear();
+}
+
+
+
+
+
+
+
+
+
+
+
 
 

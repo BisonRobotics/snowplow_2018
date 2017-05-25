@@ -26,12 +26,6 @@ private:
     // carries the results of parsed data
     std::vector<float> floatVec;
 
-    // data is saved to disk through this thing
-    std::ofstream outputStream;
-
-    // data is read through here
-    std::ifstream inputStream;
-
 public:
     // initialize the sick sensor connection
     void init(void);
@@ -44,6 +38,17 @@ public:
 
     // take a data scan and store the results in floatVec
     void scanData(void);
+
+    // run the SICK sensor (continuously...?)_
+    void run(void);
+
+    // get state of SICK sensor
+    void getDeviceState(void);
+
+    void printReply(void);
+
+    // get reply in ASCII character array (std::vector<char>)
+    std::vector<char> getReply(void);
 
     // return the results from the most recent scan
     std::vector<float> getResults(void);
