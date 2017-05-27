@@ -115,6 +115,42 @@ void SerialController::start(void) {
     }
 }
 
+bool SerialController::set_ModeBlocking(void) {
+    int sFlags = fcntl(fd, F_GETFL, 0);
+
+    if(sFlags == -1)
+        return false;
+
+    sFlags &= ~O_NONBLOCK;
+
+    if(fnctl(fd, F_SETFL, sFlags) == -1)
+        return false;
+
+    // return success
+    return true;
+}
+
+bool SerialController::set_ModeNonblocking(void) {
+    int sFlags = fcntl(fd, F_GETFL, 0);
+
+    if(sFlags == -1)
+        return false;
+
+    sFlags |= O_NONBLOCK;
+
+    if(fcntl(fd, F_SETFL, sFlags) == -1)
+        return false;
+
+    // return success
+    return true;
+}
+
+int SerialController::hasData(void) {
+    int bAvail;
+    ioctl(sc.get_FileDescriptor(), FIONREAD, &bAvail);
+    return bAvail;
+}
+
 int SerialController::get_FileDescriptor(void) {
     return fd;
 }

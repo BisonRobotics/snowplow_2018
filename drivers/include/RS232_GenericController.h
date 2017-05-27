@@ -57,9 +57,19 @@ public:
     // set either 1 or 2 stop bits for this port
     void set_StopBits(STOPBITS stopbits);
 
+    // set the serial port as blocking, returns true on success
+    bool set_ModeBlocking(void);
+
+    // set the serial port as non-blocking, returns true on success
+    bool set_ModeNonblocking(void);
+
+    // how much data can currently be read from the serial port
+    int hasData(void);
+
     // start serial communications
     void start(void);
 
+    // return the file descriptor of the serial port
     int get_FileDescriptor(void);
 };
 
