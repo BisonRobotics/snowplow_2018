@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
     sc.set_ModeNonblocking();
     int iters = 0;
 
+
     while(1) {
         if(sc.hasData()) {
             uint32_t data;
