@@ -1,5 +1,6 @@
 #include <RS232_GenericController.h>
 
+#include <sys/ioctl.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
@@ -33,6 +34,7 @@ void SC::set_SerialPort(const char* serialPort) {
         std::cerr << "    Error code: " << e << std::endl;
         exit(-1);
     }
+
     serialPortSet = true;
 }
 
@@ -116,6 +118,11 @@ void SerialController::start(void) {
 }
 
 bool SerialController::set_ModeBlocking(void) {
+    if(!serialPortSet) {
+        std::cerr << "Error: serial port not started" << std::endl;
+        exit(-1);
+    }
+
     int sFlags = fcntl(fd, F_GETFL, 0);
 
     if(sFlags == -1)
@@ -123,7 +130,7 @@ bool SerialController::set_ModeBlocking(void) {
 
     sFlags &= ~O_NONBLOCK;
 
-    if(fnctl(fd, F_SETFL, sFlags) == -1)
+    if(fcntl(fd, F_SETFL, sFlags) == -1)
         return false;
 
     // return success
@@ -147,7 +154,7 @@ bool SerialController::set_ModeNonblocking(void) {
 
 int SerialController::hasData(void) {
     int bAvail;
-    ioctl(sc.get_FileDescriptor(), FIONREAD, &bAvail);
+    ioctl(fd, FIONREAD, &bAvail);
     return bAvail;
 }
 

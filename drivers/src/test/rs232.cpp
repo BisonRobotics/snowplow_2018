@@ -23,11 +23,14 @@ int main(int argc, char* argv[]) {
 
     cout << "Serial port opening successful" << endl;
 
+    sc.set_ModeNonblocking();
+    int iters = 0;
+
     while(1) {
         if(sc.hasData()) {
             uint32_t data;
             sc.readBuffer((char*)&data, 4);
-            cout << data << endl;
+            cout << "Iters: " << ++iters << "  " << data << endl;
         }
     }
 
