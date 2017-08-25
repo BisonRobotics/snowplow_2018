@@ -27,11 +27,11 @@ int main(int argc, char* argv[]) {
     int rightSpeed = 0;
     int leftSpeed  = 0;
 
-    XboxController::STICK sRight = XboxController::STICK::RIGHT;
-    XboxController::STICK sLeft  = XboxController::STICK::LEFT;
+    xBox_STICK sRight = xBox_RIGHT;
+    xBox_STICK sLeft  = xBox_LEFT;
 
-    WHEEL lMotor = WHEEL::LEFT;
-    WHEEL rMotor = WHEEL::RIGHT;
+    Bot_WHEEL lMotor = Bot_LEFT;
+    Bot_WHEEL rMotor = Bot_RIGHT;
 
     while(1) {
         xc.update();

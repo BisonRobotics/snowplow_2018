@@ -4,8 +4,8 @@
 #include <iostream>
 #include <RS232_GenericController.h>
 
-enum WHEEL {
-    LEFT, RIGHT
+enum Bot_WHEEL {
+    Bot_LEFT, Bot_RIGHT
 };
 
 class RoboteQInterface {
@@ -21,7 +21,7 @@ public:
     RoboteQInterface(char* fileSer);
 
     // set the corresponding wheel to a given velocity
-    void wheelVelocity(int velocity, WHEEL w);
+    void wheelVelocity(int velocity, Bot_WHEEL w);
 
     // bring speed of both wheels to zero immediately
     void wheelHalt(void);

@@ -3,20 +3,21 @@
 
 #include <SDL/SDL.h>
 
+enum xBox_STICK {
+    xBox_LEFT, xBox_RIGHT
+};
+
 class XboxController {
 public:
     // empty constructor
     XboxController(void) { }
 
+    // cycle events on the xbox controller
     void update(void);
 
-    enum STICK {
-        LEFT, RIGHT
-    };
-
-    int16_t getJoyX(STICK s);
-    int16_t getJoyY(STICK s);
-    int16_t getTrigger(STICK s);
+    int16_t getJoyX(xBox_STICK s);
+    int16_t getJoyY(xBox_STICK s);
+    int16_t getTrigger(xBox_STICK s);
 
 private:
     // left joystick x/y values

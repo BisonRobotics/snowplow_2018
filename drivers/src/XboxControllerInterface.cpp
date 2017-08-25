@@ -1,3 +1,7 @@
+/*
+    Implementation for XboxControllerInterface library
+*/
+#include <iostream>
 #include <SDL/SDL.h>
 #include "XboxControllerInterface.h"
 
@@ -35,29 +39,33 @@ void XboxController::update(void) {
     }
 }
 
-int16_t XboxController::getJoyX(XboxController::STICK s) {
+int16_t XboxController::getJoyX(xBox_STICK s) {
     switch(s) {
-        case XboxController::STICK::LEFT:
+        case xBox_LEFT:
             return leftJoystickX;
-        case XboxController::STICK::RIGHT:
+        case xBox_RIGHT:
             return rightJoystickX;
     }
 }
 
-int16_t XboxController::getJoyY(XboxController::STICK s) {
+int16_t XboxController::getJoyY(xBox_STICK s) {
     switch(s) {
-        case XboxController::STICK::LEFT:
+        case xBox_LEFT:
             return leftJoystickY;
-        case XboxController::STICK::RIGHT:
+        case xBox_RIGHT:
             return rightJoystickY;
+        default:
+            std::cerr << "ERROR in XboxControllerInterface" << std::endl;
+            exit(EXIT_FAILURE);
+            break;
     }
 }
 
-int16_t XboxController::getTrigger(STICK s) {
+int16_t XboxController::getTrigger(xBox_STICK s) {
     switch(s) {
-        case STICK::LEFT:
+        case xBox_LEFT:
             return leftTrigger;
-        case STICK::RIGHT:
+        case xBox_RIGHT:
             return rightTrigger;
     }
 }
