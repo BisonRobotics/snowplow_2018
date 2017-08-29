@@ -17,6 +17,7 @@ ALLOBJS =  $(OBJS)/rs232.o
 ALLOBJS += $(OBJS)/tcp.o
 ALLOBJS += $(OBJS)/xbox.o
 
+
 final: rs232 gps tcp xbox
 	$(info nothing to do for final executable... yet)
 
@@ -50,6 +51,11 @@ test_lidar: tcp lidar
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL
 
+test_encoder: rs232 encoder
+	$(info --  building SICK Lidar test program)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/encoderTest.cpp -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/encoder.o $(STDOPTS)
+
 # rules for all of the individual object files that need to be linked in final executable
 
 rs232: $(SRC)/RS232_GenericController.cpp
@@ -69,3 +75,10 @@ roboteq: $(SRC)/RoboteQ.cpp
 
 lidar: $(SRC)/LidarInterface.cpp
 	$(CXX) -c -o $(OBJS)/lidar.o -I$(INCLUDE)/ $(SRC)/LidarInterface.cpp $(STDOPTS)
+
+encoder: $(SRC)/Encoder_arduino.cpp
+	$(CXX) -c -o $(OBJS)/encoder.o -I$(INCLUDE)/ $(SRC)/Encoder_arduino.cpp $(STDOPTS)
+
+# remove all built binaries
+clean:
+	rm bin/*
