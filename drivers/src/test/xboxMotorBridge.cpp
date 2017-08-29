@@ -45,8 +45,8 @@ int main(int argc, char* argv[]) {
     while(1) {
         xc.update();
 
-        const float max_speed = 300.0;
-        const float min_speed = -300.0;
+        const float max_speed = 500.0;
+        const float min_speed = -500.0;
 
         rightSpeed = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sRight), min_speed, max_speed);
         leftSpeed  = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sLeft),  min_speed, max_speed);
