@@ -57,11 +57,9 @@ public:
     // set either 1 or 2 stop bits for this port
     void set_StopBits(STOPBITS stopbits);
 
-    // set the serial port as blocking, returns true on success
-    bool set_ModeBlocking(void);
-
-    // set the serial port as non-blocking, returns true on success
-    bool set_ModeNonblocking(void);
+    // dont use either of these two methods yet, still figuring out
+    bool set_ModeBlocking(void);    // set the serial port as blocking, returns true on success
+    bool set_ModeNonblocking(void); // set the serial port as non-blocking, returns true on success
 
     // how much data can currently be read from the serial port
     int hasData(void);

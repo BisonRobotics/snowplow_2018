@@ -24,14 +24,14 @@ void SC::set_SerialPort(const char* serialPort) {
     if(fd < 0) {
         int e = errno;
         std::cerr << "Error opening file" << std::endl;
-        std::cerr << "    Error code: " << e << std::endl;
+        std::cerr << "    Error: " << strerror(e) << std::endl;
         exit(-1);
     }
 
     if(tcgetattr(fd, &tty) < 0) {
         int e = errno;
         std::cerr << "Error retrieving attributes" << std::endl;
-        std::cerr << "    Error code: " << e << std::endl;
+        std::cerr << "    Error: " << strerror(e) << std::endl;
         exit(-1);
     }
 

@@ -53,8 +53,8 @@ test_lidar: tcp lidar
 
 test_encoder: rs232 encoder
 	$(info --  building SICK Lidar test program)
-	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/encoderTest.cpp -I$(INCLUDE)/ $(STDOPTS) 
-	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/encoder.o $(STDOPTS) 
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/encoderTest.cpp -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/encoder.o $(STDOPTS)
 
 # rules for all of the individual object files that need to be linked in final executable
 
@@ -79,3 +79,6 @@ lidar: $(SRC)/LidarInterface.cpp
 encoder: $(SRC)/Encoder_arduino.cpp
 	$(CXX) -c -o $(OBJS)/encoder.o -I$(INCLUDE)/ $(SRC)/Encoder_arduino.cpp $(STDOPTS)
 
+# remove all built binaries
+clean:
+	rm bin/*
