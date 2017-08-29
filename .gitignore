@@ -1,6 +1,6 @@
 # ignore all the binaries as these are
 # specific to each platform
-# drivers/build/bin/*
+drivers/build/bin/*
 
 # ignore all object code files
-# drivers/build/obj/*.o
+drivers/build/obj/*.o
