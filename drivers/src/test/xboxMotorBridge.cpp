@@ -2,6 +2,7 @@
 
 #include <XboxControllerInterface.h>
 #include <RoboteQ.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -12,7 +13,13 @@ float mapFloat(float in_min, float in_max, float x, float out_min, float out_max
 int main(int argc, char* argv[]) {
     SDL_Init(SDL_INIT_EVERYTHING); // initialize joysticks
 
-    RoboteQInterface rqi("/dev/ttyUSB0");
+    if(argc != 2) {
+        cerr << "Not enough arguments\n";
+        cerr << "Usage: <progname> <seial device mount location>\n";
+        exit(EXIT_FAILURE);
+    }
+
+    RoboteQInterface rqi(argv[1]); // always first argument to program
     XboxController xc;
 
     SDL_Joystick* j = 0;
@@ -33,11 +40,16 @@ int main(int argc, char* argv[]) {
     Bot_WHEEL lMotor = Bot_LEFT;
     Bot_WHEEL rMotor = Bot_RIGHT;
 
+    rqi.setWatchdogTimer(0x0000);
+
     while(1) {
         xc.update();
 
-        rightSpeed = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sRight), -1000.0, 1000.0);
-        leftSpeed  = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sLeft),  -1000.0, 1000.0);
+        const float max_speed = 300.0;
+        const float min_speed = -300.0;
+
+        rightSpeed = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sRight), min_speed, max_speed);
+        leftSpeed  = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sLeft),  min_speed, max_speed);
 
         if(rightSpeed < 100 && rightSpeed > -100)
             rightSpeed = 0;
@@ -45,10 +57,12 @@ int main(int argc, char* argv[]) {
         if(leftSpeed < 100 && leftSpeed > -100)
             leftSpeed = 0;
 
-        cout  << "Left speed: " << leftSpeed << " Right speed: " << rightSpeed << endl;
+        cout << "Left speed: " << leftSpeed << " Right speed: " << rightSpeed << endl;
 
         rqi.wheelVelocity(rightSpeed, rMotor);
         rqi.wheelVelocity(leftSpeed,  lMotor);
+
+        usleep(50000);
     }
 
 }
