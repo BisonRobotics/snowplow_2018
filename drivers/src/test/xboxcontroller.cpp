@@ -60,14 +60,14 @@ int main(int argc, char* argv[]) {
 
         xc.update();
 
-        lEndX = lStartX + mapFloat(-32656.0, 32656.0, xc.getJoyX(STICK::LEFT), -90.0, 90.0);
-        lEndY = lStartY + mapFloat(-32656.0, 32656.0, xc.getJoyY(STICK::LEFT), -90.0, 90.0);
+        lEndX = lStartX + mapFloat(-32656.0, 32656.0, xc.getJoyX(xBox_LEFT), -90.0, 90.0);
+        lEndY = lStartY + mapFloat(-32656.0, 32656.0, xc.getJoyY(xBox_LEFT), -90.0, 90.0);
 
-        rEndX = rStartX + mapFloat(-32656.0, 32656.0, xc.getJoyX(STICK::RIGHT), -90.0, 90.0);
-        rEndY = rStartY + mapFloat(-32656.0, 32656.0, xc.getJoyY(STICK::RIGHT), -90.0, 90.0);
+        rEndX = rStartX + mapFloat(-32656.0, 32656.0, xc.getJoyX(xBox_RIGHT), -90.0, 90.0);
+        rEndY = rStartY + mapFloat(-32656.0, 32656.0, xc.getJoyY(xBox_RIGHT), -90.0, 90.0);
 
-        lTrig.h = mapFloat(-32656.0, 32656.0, xc.getTrigger(STICK::LEFT),  0.0, 480.0);
-        rTrig.h = mapFloat(-32656.0, 32656.0, xc.getTrigger(STICK::RIGHT), 0.0, 480.0);
+        lTrig.h = mapFloat(-32656.0, 32656.0, xc.getTrigger(xBox_LEFT),  0.0, 480.0);
+        rTrig.h = mapFloat(-32656.0, 32656.0, xc.getTrigger(xBox_RIGHT), 0.0, 480.0);
 
         sdlDrawPrim::target(screen, lEndX, lEndY, 10, cp.red);
         sdlDrawPrim::target(screen, rEndX, rEndY, 10, cp.fuschia);

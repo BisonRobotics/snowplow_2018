@@ -19,10 +19,10 @@ ALLOBJS += $(OBJS)/xbox.o
 
 
 final: rs232 gps tcp xbox
-	$(info nothing to do for final executable... yet)
+	$(info -- nothing to do for final executable... yet)
 
 all: test_rs232 test_GPS test_xBox test_xboxMotorBridge
-	# build every test
+	$(info -- built every test)
 
 # every library has a test here
 
@@ -32,7 +32,7 @@ test_rs232: rs232
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o -I$(INCLUDE)/ $(STDOPTS)
 
 test_GPS: gps
-	$(info no test for GPS)
+	$(info -- no test for GPS)
 
 test_xBox: xbox
 	$(info --  building color object used by test_xBox target)
@@ -62,7 +62,7 @@ rs232: $(SRC)/RS232_GenericController.cpp
 	$(CXX) -c -o $(OBJS)/rs232.o -I$(INCLUDE)/ $(SRC)/RS232_GenericController.cpp $(STDOPTS)
 
 gps:
-	$(info nothing to do for GPS)
+	$(info -- nothing to do for GPS)
 
 tcp: $(SRC)/TCP_Connection.cpp
 	$(CXX) -c -o $(OBJS)/tcp.o -I$(INCLUDE)/ $(SRC)/TCP_Connection.cpp $(STDOPTS)
@@ -81,4 +81,5 @@ encoder: $(SRC)/Encoder_arduino.cpp
 
 # remove all built binaries
 clean:
+	$(info -- removing all binaries)
 	rm bin/*
