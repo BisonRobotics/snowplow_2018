@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     Bot_WHEEL lMotor = Bot_LEFT;
     Bot_WHEEL rMotor = Bot_RIGHT;
 
-    rqi.setWatchdogTimer(0x0000);
+    rqi.setWatchdogTimer(200); // 200 ms
 
     while(1) {
         xc.update();

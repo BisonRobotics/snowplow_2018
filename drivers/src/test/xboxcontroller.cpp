@@ -76,6 +76,8 @@ int main(int argc, char* argv[]) {
         SDL_FillRect(screen, &rTrig, cp.lime);
 
         SDL_Flip(screen);
+
+        SDL_Delay(100);
     }
 
     SDL_Quit();
