@@ -3,12 +3,13 @@
 #include <vector>
 #include <fstream>
 
+#include <errno.h>
 #include <math.h>
 #include <SDL/SDL.h>
 #include <LidarInterface.h>
 
 #ifndef SCALE_F
-#define SCALE_F 10.0
+#define SCALE_F 20.0
 #endif // SCALE_F
 
 #define PIXEL_SIZE 2
@@ -41,9 +42,17 @@ int main(int argc, char* argv[]) {
     int num_iters = getFileSize(argv[1]);
     uint16_t* raw_values = new uint16_t[num_iters/2];
 
-    ifstream input_file(argv[1], ifstream::binary);
-    input_file.read((char*)raw_values, num_iters); // read entire file into memory
-    input_file.close();
+    //ifstream input_file(argv[1], ifstream::binary);
+    //input_file.read((char*)raw_values, num_iters); // read entire file into memory
+    //input_file.close();
+
+    FILE* f = fopen(argv[1], "r");
+    int num_bytes_read = fread((void*)raw_values, 1, num_iters, f);
+    if(num_bytes_read != num_iters) {
+        cerr << "Error reading file\n";
+        cerr << "    error: " << errno << endl;
+        cerr << "    bytes read: " << num_bytes_read << endl;
+    }
 
     cout << "File size: " << num_iters << " bytes\n";
     num_iters /= (VALS_PER_MEAS * 2);
@@ -94,8 +103,10 @@ int main(int argc, char* argv[]) {
 #else
         // frame regulation
         uint32_t time_end = SDL_GetTicks();
+        cout << "Delay time: " << TIME_PER_SCAN - (time_end - time_start) << endl;
         SDL_Delay(TIME_PER_SCAN - (time_end - time_start));
-        time_start = time_end;
+        time_start = SDL_GetTicks();
+        //SDL_Delay(100);
 #endif
     }
 
