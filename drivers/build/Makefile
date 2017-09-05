@@ -13,6 +13,8 @@ BINS    = bin
 STDOPTS = -w -lpthread -lncurses -std=c++11 -lm
 MISCLIB = $(SRC)/misc-libs
 TESTSRC = $(SRC)/test
+SDLGFX  = -lSDL_gfx
+
 ALLOBJS =  $(OBJS)/rs232.o
 ALLOBJS += $(OBJS)/tcp.o
 ALLOBJS += $(OBJS)/xbox.o
@@ -47,7 +49,7 @@ test_xboxMotorBridge: xbox roboteq rs232
 
 test_lidar: tcp lidar
 	$(info --  building SICK Lidar test program)
-	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -I$(MISCLIB) -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL
 
 test_lidarDataCollect: tcp lidar

@@ -7,9 +7,10 @@
 #include <math.h>
 #include <SDL/SDL.h>
 #include <LidarInterface.h>
+#include <Colors_v2.h>
 
 #ifndef SCALE_F
-#define SCALE_F 20.0
+#define SCALE_F 30.0
 #endif // SCALE_F
 
 #define PIXEL_SIZE 2
@@ -21,6 +22,9 @@
 #define VALS_PER_MEAS 541 // each is 16-bit unsigned value
 #define TIME_PER_SCAN 100 // ms/scan
 #endif // USE_SENSOR
+
+// comment out to not use Object Detection algorithm
+#define USE_SPOD
 
 using namespace std;
 
@@ -65,7 +69,11 @@ int main(int argc, char* argv[]) {
     int halfX = screen->w / 2;
     int halfY = screen->h / 2;
 
-    uint32_t red = SDL_MapRGB(screen->format, 255, 0, 0);
+    ColorPallette cp_std(screen);
+    ColorPallette cp_gfx(screen);
+    cp_gfx.convertColorsToGfxMode();
+
+    uint32_t red = cp_std.red;
 
     float factor = 3.14159265 / 360.00;
 
@@ -94,6 +102,10 @@ int main(int argc, char* argv[]) {
             SDL_FillRect(screen, &r, red);
         }
 
+#ifdef USE_SPOD
+
+#endif // USE_SPOD
+
         reply.clear(); // not needed but be nice to OS
         SDL_Flip(screen);
 
@@ -110,6 +122,7 @@ int main(int argc, char* argv[]) {
 #endif
     }
 
+    SDL_Quit();
     //SDL_Delay(10000);
 
     return 0;
