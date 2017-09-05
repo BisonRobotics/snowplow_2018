@@ -23,15 +23,18 @@ private:
     // TCP connection used to connect to the SICK sensor
     TCP_Controller tc;
 
-    // carries the results of parsed data
+    // carries the converted results of parsed data
     std::vector<float> floatVec;
+
+    // carries the raw values of parsed data
+    std::vector<uint16_t> shortVec;
 
 public:
     // initialize the sick sensor connection
     void init(void);
 
     // generic command for sending arbitrary commands to the SICK sensor
-    void sendCmd(std::string cmd);
+    void sendCmd(std::string cmd, bool should_echo = false);
 
     // sets the access mode of the SICK sensor
     void setAccessMode(USER mode);
@@ -53,6 +56,9 @@ public:
 
     // return the results from the most recent scan
     std::vector<float> getResults(void);
+
+    // return the raw results form the most recent scan
+    std::vector<uint16_t> getRawResults(void);
 };
 
 #endif // __LIDARINTERFACE__H__

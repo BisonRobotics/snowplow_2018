@@ -14,29 +14,22 @@ void XboxController::update(void) {
             case SDL_JOYAXISMOTION:
                 switch(event.jaxis.axis) {
                     case 0:
-                        this->leftJoystickX = event.jaxis.value;
-                        break;
+                        this->leftJoystickX = event.jaxis.value; break;
                     case 1:
-                        this->leftJoystickY = event.jaxis.value;
-                        break;
+                        this->leftJoystickY = event.jaxis.value; break;
                     case 2:
-                        this->leftTrigger = event.jaxis.value;
-                        break;
+                        this->leftTrigger = event.jaxis.value; break;
                     case 3:
-                        this->rightJoystickX = event.jaxis.value;
-                        break;
+                        this->rightJoystickX = event.jaxis.value; break;
                     case 4:
-                        this->rightJoystickY = event.jaxis.value;
-                        break;
+                        this->rightJoystickY = event.jaxis.value; break;
                     case 5:
-                        this->rightTrigger = event.jaxis.value;
-                        break;
+                        this->rightTrigger = event.jaxis.value; break;
                     default:
                         break;
                 }
                 break;
             case SDL_JOYBUTTONDOWN:
-                //std::cout << "Button: " << (int)event.jbutton.button << std::endl;
                 switch(event.jbutton.button) {
                     case 0:
                         this->btn_A = true; break;

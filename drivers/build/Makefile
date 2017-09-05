@@ -17,7 +17,6 @@ ALLOBJS =  $(OBJS)/rs232.o
 ALLOBJS += $(OBJS)/tcp.o
 ALLOBJS += $(OBJS)/xbox.o
 
-
 final: rs232 gps tcp xbox
 	$(info -- nothing to do for final executable... yet)
 
@@ -50,6 +49,11 @@ test_lidar: tcp lidar
 	$(info --  building SICK Lidar test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL
+
+test_lidarDataCollect: tcp lidar
+	$(info --  building SICK Lidar data collection test)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickDataCollection.cpp -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS)
 
 test_encoder: rs232 encoder
 	$(info --  building SICK Lidar test program)
