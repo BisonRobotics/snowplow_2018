@@ -50,7 +50,7 @@ test_xboxMotorBridge: xbox roboteq rs232
 test_lidar: tcp lidar
 	$(info --  building SICK Lidar test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -I$(MISCLIB) -lSDL
-	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL $(SDLGFX)
 
 test_lidarDataCollect: tcp lidar
 	$(info --  building SICK Lidar data collection test)

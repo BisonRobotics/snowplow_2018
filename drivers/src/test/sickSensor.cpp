@@ -8,15 +8,19 @@
 #include <SDL/SDL.h>
 #include <LidarInterface.h>
 #include <Colors_v2.h>
+#include <spod.h>
+#include <SDL/SDL_gfxPrimitives.h>
 
 #ifndef SCALE_F
-#define SCALE_F 30.0
+#define SCALE_F 20.0
 #endif // SCALE_F
 
-#define PIXEL_SIZE 2
+#define PIXEL_SIZE 3
+#define DETECT_THRESHOLD 500.0f // distance between pts to be considered one object (mm)
+#define OBJECT_THRESHOLD 1200.0f // distance between objs to be considered together (mm)
 
 // comment out to use file of pre-acquired data
-//#define USE_SENSOR
+#define USE_SENSOR
 
 #ifndef USE_SENSOR
 #define VALS_PER_MEAS 541 // each is 16-bit unsigned value
@@ -26,10 +30,14 @@
 // comment out to not use Object Detection algorithm
 #define USE_SPOD
 
+// comment out to not plot raw data
+#define PLOT_RAW_DATA
+
 using namespace std;
 
 void putTarget(SDL_Surface* screen);
 int getFileSize(string filename);
+void drawDetectedObject(const zone__& z, SDL_Surface* screen, uint32_t color);
 
 int main(int argc, char* argv[]) {
 #ifdef USE_SENSOR
@@ -85,7 +93,7 @@ int main(int argc, char* argv[]) {
 #else
     uint32_t time_start = SDL_GetTicks();
     for(int ij = 0; ij < num_iters; ij++) {
-        cout << "Iter: " << ij << endl;
+        //cout << "Iter: " << ij << endl;
         vector<float> reply;
         for(int i = 0; i < VALS_PER_MEAS; i++)
             reply.push_back((float)raw_values[ij*VALS_PER_MEAS + i]);
@@ -94,15 +102,38 @@ int main(int argc, char* argv[]) {
         SDL_FillRect(screen, NULL, NULL);
         putTarget(screen);
 
+#ifdef PLOT_RAW_DATA
         for(int i = 0; i < reply.size(); i++) {
             SDL_Rect r;
             r.w = PIXEL_SIZE; r.h = PIXEL_SIZE;
-            r.x = halfX + (reply[i] / SCALE_F) * cos(float(i-90) * factor);
-            r.y = screen->h - (halfY + (reply[i] / SCALE_F) * sin(float(i-90) * factor));
+            r.x = halfX + (reply[i] / SCALE_F) * cos(float(i-90) * factor) -1;
+            r.y = screen->h - (halfY + (reply[i] / SCALE_F) * sin(float(i-90) * factor)) -1;
             SDL_FillRect(screen, &r, red);
         }
+#endif // PLOT_RAW_DATA
 
 #ifdef USE_SPOD
+        vector<v2f> v_vec(541);
+        for(int i = 0; i < reply.size(); i++) { // convert mesaurements into cartesian coordinates
+            v2f v_temp;
+            v_temp.x = reply[i] * cos(float(i-90) * factor);
+            v_temp.y = reply[i] * sin(float(i-90) * factor);
+            v_vec.push_back(v_temp);
+        }
+
+        // we have access to an array of floats representing measurement values in mm
+        vector<zone__> objs = spodAlgo(v_vec, DETECT_THRESHOLD); // second arg is threashold in mm
+        for(int i = 0; i < objs.size(); i++) {
+            drawDetectedObject(objs[i], screen, cp_gfx.aqua);
+        }
+
+        cout << "Objs: " << objs.size() << endl;
+
+        vector<zone__> reduce_objs = spodReduceObjs(objs, OBJECT_THRESHOLD);
+        for(int i = 0; i < reduce_objs.size(); i++) {
+            drawDetectedObject(reduce_objs[i], screen, cp_gfx.fuschia);
+        }
+        cout << "Reduced obj count: " << reduce_objs.size() << endl;
 
 #endif // USE_SPOD
 
@@ -115,7 +146,7 @@ int main(int argc, char* argv[]) {
 #else
         // frame regulation
         uint32_t time_end = SDL_GetTicks();
-        cout << "Delay time: " << TIME_PER_SCAN - (time_end - time_start) << endl;
+        //cout << "Delay time: " << TIME_PER_SCAN - (time_end - time_start) << endl;
         SDL_Delay(TIME_PER_SCAN - (time_end - time_start));
         time_start = SDL_GetTicks();
         //SDL_Delay(100);
@@ -126,6 +157,15 @@ int main(int argc, char* argv[]) {
     //SDL_Delay(10000);
 
     return 0;
+}
+
+void drawDetectedObject(const zone__& z, SDL_Surface* screen, uint32_t color) {
+    lineColor(screen,
+            (z.x1/SCALE_F) + screen->w/2,
+            screen->h - (z.y1/SCALE_F) - screen->h/2,
+            (z.x2/SCALE_F) + screen->w/2,
+            screen->h - (z.y2/SCALE_F) - screen->h/2,
+            color);
 }
 
 int getFileSize(string filename) {
