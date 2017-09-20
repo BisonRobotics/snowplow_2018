@@ -12,20 +12,15 @@
 #include <SDL/SDL_gfxPrimitives.h>
 
 #ifndef SCALE_F
-#define SCALE_F 20.0
+#define SCALE_F 30.0
 #endif // SCALE_F
 
 #define PIXEL_SIZE 3
-#define DETECT_THRESHOLD 500.0f // distance between pts to be considered one object (mm)
+#define DETECT_THRESHOLD 800.0f // distance between pts to be considered one object (mm)
 #define OBJECT_THRESHOLD 1200.0f // distance between objs to be considered together (mm)
 
 // comment out to use file of pre-acquired data
-#define USE_SENSOR
-
-#ifndef USE_SENSOR
-#define VALS_PER_MEAS 541 // each is 16-bit unsigned value
-#define TIME_PER_SCAN 100 // ms/scan
-#endif // USE_SENSOR
+//#define USE_SENSOR
 
 // comment out to not use Object Detection algorithm
 #define USE_SPOD
@@ -33,11 +28,18 @@
 // comment out to not plot raw data
 #define PLOT_RAW_DATA
 
+#ifndef USE_SENSOR
+#define VALS_PER_MEAS 541 // each is 16-bit unsigned value
+#define TIME_PER_SCAN 100 // ms/scan
+#endif // USE_SENSOR
+
 using namespace std;
 
 void putTarget(SDL_Surface* screen);
 int getFileSize(string filename);
-void drawDetectedObject(const zone__& z, SDL_Surface* screen, uint32_t color);
+void drawDetectedObject(      const zone__& z, SDL_Surface* screen, uint32_t color);
+void drawDetectedObjectBox(   const zone__& z, SDL_Surface* screen, uint32_t color);
+void drawDetectedObjectCircle(const zone__& z, SDL_Surface* screen, uint32_t color);
 
 int main(int argc, char* argv[]) {
 #ifdef USE_SENSOR
@@ -64,12 +66,12 @@ int main(int argc, char* argv[]) {
         cerr << "Error reading file\n";
         cerr << "    error: " << errno << endl;
         cerr << "    bytes read: " << num_bytes_read << endl;
+        return 1;
     }
 
     cout << "File size: " << num_iters << " bytes\n";
     num_iters /= (VALS_PER_MEAS * 2);
     cout << "Scans: " << num_iters << endl;
-
 #endif
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -83,9 +85,8 @@ int main(int argc, char* argv[]) {
 
     uint32_t red = cp_std.red;
 
-    float factor = 3.14159265 / 360.00;
+    float factor = 3.14159265 / 360.00; // degree to rad conversion
 
-    //putTarget(screen);
 #ifdef USE_SENSOR
     for(int ij = 0; ij < 2000; ij++) {
         li.scanData();
@@ -102,6 +103,13 @@ int main(int argc, char* argv[]) {
         SDL_FillRect(screen, NULL, NULL);
         putTarget(screen);
 
+        const float MIN_MEASURE = 10.0; 
+        // pre-process the data before passing it to spod
+        for(int i = 1; i < reply.size(); i++) {
+            if(reply[i] < MIN_MEASURE)
+                reply[i] = reply[i-1]; // should cover arbitrary ranges of bad data
+        }
+
 #ifdef PLOT_RAW_DATA
         for(int i = 0; i < reply.size(); i++) {
             SDL_Rect r;
@@ -113,6 +121,7 @@ int main(int argc, char* argv[]) {
 #endif // PLOT_RAW_DATA
 
 #ifdef USE_SPOD
+
         vector<v2f> v_vec(541);
         for(int i = 0; i < reply.size(); i++) { // convert mesaurements into cartesian coordinates
             v2f v_temp;
@@ -123,15 +132,18 @@ int main(int argc, char* argv[]) {
 
         // we have access to an array of floats representing measurement values in mm
         vector<zone__> objs = spodAlgo(v_vec, DETECT_THRESHOLD); // second arg is threashold in mm
+        //vector<zone__> objs = spodAlgoMaximizeCoverage(v_vec, DETECT_THRESHOLD);
         for(int i = 0; i < objs.size(); i++) {
-            drawDetectedObject(objs[i], screen, cp_gfx.aqua);
+            drawDetectedObjectCircle(objs[i], screen, cp_gfx.aqua);
+            //drawDetectedObjectBox(objs[i], screen, cp_gfx.aqua);
         }
 
         cout << "Objs: " << objs.size() << endl;
 
         vector<zone__> reduce_objs = spodReduceObjs(objs, OBJECT_THRESHOLD);
         for(int i = 0; i < reduce_objs.size(); i++) {
-            drawDetectedObject(reduce_objs[i], screen, cp_gfx.fuschia);
+            //drawDetectedObject(reduce_objs[i], screen, cp_gfx.fuschia);
+            //drawDetectedObjectBox(reduce_objs[i], screen, cp_gfx.fuschia);
         }
         cout << "Reduced obj count: " << reduce_objs.size() << endl;
 
@@ -168,6 +180,27 @@ void drawDetectedObject(const zone__& z, SDL_Surface* screen, uint32_t color) {
             color);
 }
 
+void drawDetectedObjectBox(const zone__& z, SDL_Surface* screen, uint32_t color) {
+    rectangleColor(screen,
+            (z.x1/SCALE_F) + screen->w/2,
+            screen->h - (z.y1/SCALE_F) - screen->h/2,
+            (z.x2/SCALE_F) + screen->w/2,
+            screen->h - (z.y2/SCALE_F) - screen->h/2,
+            color);
+}
+
+void drawDetectedObjectCircle(const zone__& z, SDL_Surface* screen, uint32_t color) {
+    float half_x = (z.x1 + z.x2) / 2.0;
+    float half_y = (z.y1 + z.y2) / 2.0;
+    float radius = distance(z.x1, z.y1, z.x2, z.y2) / 2.0; // from spod.h
+
+    circleColor(screen,
+            (half_x/SCALE_F) + screen->w/2,
+            screen->h - (half_y/SCALE_F) - screen->h/2,
+            radius/SCALE_F,
+            color);
+}
+
 int getFileSize(string filename) {
     long beg_, end_;
     ifstream file(filename);
@@ -179,6 +212,23 @@ int getFileSize(string filename) {
 }
 
 void putTarget(SDL_Surface* screen) {
+    uint32_t grey = SDL_MapRGB(screen->format, 80, 80, 80);
+
+    const float plow_w = 685.8f / SCALE_F;
+    const float plow_l = 1143.0f / SCALE_F;
+
+    // position the snowplow in proper location
+    float x = screen->w/2 - plow_w/2;
+    float y = screen->h/2;
+
+    SDL_Rect s;
+    s.x = x;
+    s.y = y;
+    s.w = plow_w;
+    s.h = plow_l;
+
+    SDL_FillRect(screen, &s, grey);
+
     uint32_t white = SDL_MapRGB(screen->format, 255, 255, 255);
 
     SDL_Rect r;
