@@ -5,6 +5,7 @@
 #include <TCP_Connection.h>
 #include <vector>
 #include <fstream>
+#include <glm/glm.hpp>
 
 enum FREQ {
     _25Hz, _50Hz
@@ -29,6 +30,11 @@ private:
     // carries the raw values of parsed data
     std::vector<uint16_t> shortVec;
 
+    // cartesian equivalent of polar measurements
+    std::vector<glm::vec2> cartVec;
+
+    float __angles[541];
+
 public:
     // initialize the sick sensor connection
     void init(void);
@@ -48,7 +54,7 @@ public:
     // get state of SICK sensor
     void getDeviceState(void);
 
-
+    // print the ASCII reply
     void printReply(void);
 
     // get reply in ASCII character array (std::vector<char>)
@@ -59,6 +65,13 @@ public:
 
     // return the raw results form the most recent scan
     std::vector<uint16_t> getRawResults(void);
+
+    // get various pieces of processed data
+    void generateVectorData(void); // take most recent scan, generate float vec and glm::vec2 vec
+    void linearizeData(void);
+    std::vector<glm::vec2>* getVectorCartesian(void);
+    std::vector<float>*     getVectorPolarFloat(void);
+    std::vector<uint16_t>*  getVectorPolarInt(void);
 };
 
 #endif // __LIDARINTERFACE__H__

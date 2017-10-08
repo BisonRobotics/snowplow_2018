@@ -35,8 +35,10 @@ void RoboteQInterface::wheelVelocity(int velocity, Bot_WHEEL w) {
 }
 
 void RoboteQInterface::wheelHalt(void) {
-    wheelVelocity(0, Bot_LEFT);
-    wheelVelocity(0, Bot_RIGHT);
+    for(int i = 0; i < 20; i++) {
+        wheelVelocity(0, Bot_LEFT);
+        wheelVelocity(0, Bot_RIGHT);
+    }
 }
 
 void RoboteQInterface::setWatchdogTimer(int ms) {

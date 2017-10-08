@@ -13,7 +13,7 @@ BINS    = bin
 STDOPTS = -w -lpthread -lncurses -std=c++11 -lm
 MISCLIB = $(SRC)/misc-libs
 TESTSRC = $(SRC)/test
-SDLGFX  = -lSDL_gfx
+SDLGFX  = -lSDL_gfx -lSDL
 
 ALLOBJS =  $(OBJS)/rs232.o
 ALLOBJS += $(OBJS)/tcp.o
@@ -61,6 +61,11 @@ test_encoder: rs232 encoder
 	$(info --  building SICK Lidar test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/encoderTest.cpp -I$(INCLUDE)/ $(STDOPTS)
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/encoder.o $(STDOPTS)
+
+test_objectDetectionAndResponse: rs232 lidar tcp roboteq
+	$(info --  building Object detection and response program)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickObjectResponse.cpp -I$(INCLUDE) $(STDOPTS) -I$(MISCLIB) $(SDLGFX)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/lidar.o $(OBJS)/tcp.o $(OBJS)/roboteq.o $(STDOPTS) $(SDLGFX)
 
 # rules for all of the individual object files that need to be linked in final executable
 

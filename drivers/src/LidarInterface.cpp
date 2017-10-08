@@ -3,11 +3,16 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <math.h>
+#include <glm/glm.hpp>
 
 void LidarInterface::init(void) {
     tc.set_Hostname("192.168.0.1");
     tc.set_PortNumber(2111);
     tc.start();
+
+    for(int i = 0; i < 541; i++)
+        __angles[i] = float(i-90) * 0.00872665; // magic number, dont touch, dont ask, trust blindly
 }
 
 void LidarInterface::setAccessMode(USER mode) {
@@ -52,13 +57,11 @@ void LidarInterface::scanData(void) {
     for(int i = 0; i < 5; i++)
         inputStream >> std::hex >> numMeas;
 
-    //std::cout << numMeas << std::endl;
+    std::cout << "Measurements: " << numMeas << std::endl;
 
     uint16_t tShort;
     for(int i = 0; i < numMeas; i++) {
         inputStream >> std::hex >> tShort;
-        //std::cout << tShort << std::endl;
-        floatVec.push_back(float(tShort));
         shortVec.push_back(tShort);
     }
 
@@ -104,14 +107,31 @@ void LidarInterface::printReply(void) {
     reply.clear();
 }
 
+void LidarInterface::generateVectorData(void) {
+    this->floatVec.clear();
+    this->cartVec.clear();
 
+    for(int i = 0; i < 541; i++) {
+        floatVec.push_back((float)shortVec[i]);
+        cartVec.push_back(glm::vec2(floatVec[i]*cos(__angles[i]), floatVec[i]*sin(__angles[i])));
+    }
+}
 
+std::vector<glm::vec2>* LidarInterface::getVectorCartesian(void) {
+    return &cartVec;
+}
 
+std::vector<float>* LidarInterface::getVectorPolarFloat(void) {
+    return &floatVec;
+}
 
+std::vector<uint16_t>* LidarInterface::getVectorPolarInt(void) {
+    return &shortVec;
+}
 
+void LidarInterface::linearizeData(void) {
 
-
-
+}
 
 
 
