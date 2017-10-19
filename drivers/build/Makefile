@@ -23,7 +23,7 @@ ALLOBJS += $(OBJS)/gps.o
 final: rs232 gps tcp xbox
 	$(info -- nothing to do for final executable... yet)
 
-all: test_rs232 test_GPS test_xBox test_xboxMotorBridge
+all: test_rs232 test_GPS test_xBox test_xboxMotorBridge test_lidar test_lidarDataCollect #test_encoder
 	$(info -- built every test)
 
 # every library has a test here
@@ -61,7 +61,7 @@ test_lidarDataCollect: tcp lidar
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS)
 
 test_encoder: rs232 encoder
-	$(info --  building SICK Lidar test program)
+	$(info --  building encoder test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/encoderTest.cpp -I$(INCLUDE)/ $(STDOPTS)
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/encoder.o $(STDOPTS)
 
