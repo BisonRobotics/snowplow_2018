@@ -18,6 +18,7 @@ SDLGFX  = -lSDL_gfx
 ALLOBJS =  $(OBJS)/rs232.o
 ALLOBJS += $(OBJS)/tcp.o
 ALLOBJS += $(OBJS)/xbox.o
+ALLOBJS += $(OBJS)/gps.o
 
 final: rs232 gps tcp xbox
 	$(info -- nothing to do for final executable... yet)
@@ -33,7 +34,9 @@ test_rs232: rs232
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o -I$(INCLUDE)/ $(STDOPTS)
 
 test_GPS: gps
-	$(info -- no test for GPS)
+	$(info -- building gps test program)
+	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/gpsTest.cpp -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/gps.o -I$(INCLUDE)/ $(STDOPTS)
 
 test_xBox: xbox
 	$(info --  building color object used by test_xBox target)
@@ -67,8 +70,8 @@ test_encoder: rs232 encoder
 rs232: $(SRC)/RS232_GenericController.cpp
 	$(CXX) -c -o $(OBJS)/rs232.o -I$(INCLUDE)/ $(SRC)/RS232_GenericController.cpp $(STDOPTS)
 
-gps:
-	$(info -- nothing to do for GPS)
+gps: $(SRC)/GpsInterface.cpp
+	$(CXX) -c -o $(OBJS)/gps.o -I$(INCLUDE)/ $(SRC)/GpsInterface.cpp $(STDOPTS)
 
 tcp: $(SRC)/TCP_Connection.cpp
 	$(CXX) -c -o $(OBJS)/tcp.o -I$(INCLUDE)/ $(SRC)/TCP_Connection.cpp $(STDOPTS)
