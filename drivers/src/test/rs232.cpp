@@ -15,9 +15,9 @@ int main(int argc, char* argv[]) {
     sc.set_SerialPort("/dev/ttyUSB0");
 
     sc.set_BaudRate(B115200);
-    sc.set_Parity  (SerialController::PARITY::OFF);
-    sc.set_StopBits(SerialController::STOPBITS::_1);
-    sc.set_WordSize(SerialController::WORDSIZE::_8);
+    sc.set_Parity  (Parity_Off);
+    sc.set_StopBits(StopBits_1);
+    sc.set_WordSize(WordSize_8);
 
     sc.start();
 

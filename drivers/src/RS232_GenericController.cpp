@@ -53,17 +53,17 @@ void SC::set_BaudRate(int baudrate) {
     cfsetospeed(&tty, baudrate);
 }
 
-void SC::set_Parity(SC::PARITY parity) {
+void SC::set_Parity(Parity parity) {
     switch(parity) {
-        case SC::PARITY::EVEN:
+        case Parity_Even:
             tty.c_cflag |= PARENB;
             tty.c_cflag &= ~PARODD;
             break;
-        case SC::PARITY::ODD:
+        case Parity_Odd:
             tty.c_cflag |= PARENB;
             tty.c_cflag |= PARODD;
             break;
-        case SC::PARITY::OFF: // disable the parity bit
+        case Parity_Off: // disable the parity bit
             tty.c_cflag &= ~PARENB;
             break;
         default:
@@ -72,12 +72,12 @@ void SC::set_Parity(SC::PARITY parity) {
     }
 }
 
-void SC::set_StopBits(SC::STOPBITS stopbits) {
+void SC::set_StopBits(StopBits stopbits) {
     switch(stopbits) {
-        case SC::STOPBITS::_1:
+        case StopBits_1:
             tty.c_cflag &= ~CSTOPB;
             break;
-        case SC::STOPBITS::_2:
+        case StopBits_2:
             tty.c_cflag |= CSTOPB;
             break;
         default:
@@ -86,13 +86,13 @@ void SC::set_StopBits(SC::STOPBITS stopbits) {
     }
 }
 
-void SC::set_WordSize(SC::WORDSIZE wordsize) {
+void SC::set_WordSize(WordSize wordsize) {
     switch(wordsize) {
-        case SC::WORDSIZE::_7:
+        case WordSize_7:
             tty.c_cflag &= ~CSIZE;
             tty.c_cflag |= CS7;
             break;
-        case SC::WORDSIZE::_8:
+        case WordSize_8:
             tty.c_cflag &= ~CSIZE;
             tty.c_cflag |= CS8;
             break;
