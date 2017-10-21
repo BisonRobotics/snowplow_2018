@@ -12,9 +12,12 @@
 enum GpsMsgType {
 	GpsMsgType_NONE, // no gps message
 	GpsMsgType_GGA,  // fix info
+	GpsMsgType_GLL,  // latitude/longitude data
 	GpsMsgType_GSA,  // overall satellite info
 	GpsMsgType_GRS,  // GPS range residuals
 	GpsMsgType_GSV,  // detailed satellite data
+	GpsMsgType_VTG,  // vector track and speed over ground
+	GpsMsgType_RMC,  // recommended minimum data for GPS
 };
 
 /*
@@ -24,12 +27,24 @@ class GpsInterface {
 private:
 	std::string filename;
 	std::ifstream file;
+	
+	// internal storage of various message types and timestamps
+	std::string __gga; uint64_t __gga_ts; 
+	std::string __gll; uint64_t __gll_ts;
+	std::string __gsa; uint64_t __gsa_ts;
+	std::string __grs; uint64_t __grs_ts;
+	std::string __gsv; uint64_t __gsv_ts;
+	std::string __vtg; uint64_t __vtg_ts;
+	std::string __rmc; uint64_t __rmc_ts;
 
-	// internal storage of various message types
-	std::string __gga;
-	std::string __gsa;
-	std::string __grs;
-	std::string __gsv;
+	// incoming chars stored here before processing
+	std::vector<char> __gps_buffer;
+
+	bool compGpsTag(const char* orig, const char* comp);
+	GpsMsgType getGpsMsgType(const char* field);
+	uint64_t getTimestamp(void); 
+
+	GpsMsgType parseGpsChar(char c);
 
 public:
 	// only constructor, supply a file to open
@@ -39,8 +54,18 @@ public:
 	// and tell if a particular message type has arrived
 	GpsMsgType update(void);
 
-	// return the most recent GPS message of a particular type
-	//... functions yet to be defined
+	// get the most recent message of a particular type
+	// this does not update anything, only retrieves data
+	std::string getMessage(GpsMsgType msgType);
+
+	// get the most recent timestamp associated 
+	// with the most recent message of a particular
+	// type
+	uint64_t getTimestamp(GpsMsgType gpstype);
+
+	// object-less method to parse GPS message strings
+	static std::vector<std::string> splitGpsMessage(const std::string& input);
+
 };
 
 #endif // __JJC__GPS__INTERFACE__H__

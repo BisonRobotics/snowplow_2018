@@ -1,5 +1,6 @@
 #include <RS232_GenericController.h>
 
+#include <string>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
@@ -13,13 +14,13 @@ SC::SerialController(void) {
     ;
 }
 
-SC::SerialController(const char* serialPort) {
+SC::SerialController(const std::string& serialPort) {
     SerialController::set_SerialPort(serialPort);
 }
 
-void SC::set_SerialPort(const char* serialPort) {
+void SC::set_SerialPort(const std::string& serialPort) {
     memset(&tty, 0, sizeof tty);
-    fd = open(serialPort, O_RDWR | O_NOCTTY | O_NDELAY); // pretty standard flags
+    fd = open(serialPort.c_str(), O_RDWR | O_NOCTTY | O_NDELAY); // pretty standard flags
     if(fd < 0) {
         int e = errno;
         std::cerr << "Error opening file" << std::endl;
@@ -40,12 +41,12 @@ void SC::parityEnable(void) {
     tty.c_cflag |= PARENB;
 }
 
-void SC::writeBuffer(char* buffer, int bufSize) {
-    write(fd, buffer, bufSize);
+int SC::writeBuffer(char* buffer, int bufSize) {
+    return write(fd, buffer, bufSize);
 }
 
-void SC::readBuffer(char* buffer, int bufSize) {
-    read(fd, buffer, bufSize);
+int SC::readBuffer(char* buffer, int bufSize) {
+    return read(fd, buffer, bufSize);
 }
 
 void SC::set_BaudRate(int baudrate) {

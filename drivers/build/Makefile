@@ -36,7 +36,7 @@ test_rs232: rs232
 test_GPS: gps
 	$(info -- building gps test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/gpsTest.cpp -I$(INCLUDE)/ $(STDOPTS)
-	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/gps.o -I$(INCLUDE)/ $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/gps.o $(OBJS)/rs232.o -I$(INCLUDE)/ $(STDOPTS)
 
 test_xBox: xbox
 	$(info --  building color object used by test_xBox target)
@@ -68,21 +68,27 @@ test_encoder: rs232 encoder
 # rules for all of the individual object files that need to be linked in final executable
 
 rs232: $(SRC)/RS232_GenericController.cpp
+	$(info ==  building rs232 interface)
 	$(CXX) -c -o $(OBJS)/rs232.o -I$(INCLUDE)/ $(SRC)/RS232_GenericController.cpp $(STDOPTS)
 
 gps: $(SRC)/GpsInterface.cpp
+	$(info ==  building gps interface)
 	$(CXX) -c -o $(OBJS)/gps.o -I$(INCLUDE)/ $(SRC)/GpsInterface.cpp $(STDOPTS)
 
 tcp: $(SRC)/TCP_Connection.cpp
+	$(info ==  building tcp client interface)
 	$(CXX) -c -o $(OBJS)/tcp.o -I$(INCLUDE)/ $(SRC)/TCP_Connection.cpp $(STDOPTS)
 
 xbox: $(SRC)/XboxControllerInterface.cpp
+	$(info ==  building xbox controller interface)
 	$(CXX) -c -o $(OBJS)/xbox.o -I$(INCLUDE)/ $(SRC)/XboxControllerInterface.cpp $(STDOPTS) -I$(MISCLIB)/ -lSDL
 
 roboteq: $(SRC)/RoboteQ.cpp
+	$(info ==  building roboteq interface)
 	$(CXX) -c -o $(OBJS)/roboteq.o -I$(INCLUDE)/ $(SRC)/RoboteQ.cpp $(STDOPTS)
 
 lidar: $(SRC)/LidarInterface.cpp
+	$(info ==  building SICK sensor interface)
 	$(CXX) -c -o $(OBJS)/lidar.o -I$(INCLUDE)/ $(SRC)/LidarInterface.cpp $(STDOPTS)
 
 encoder: $(SRC)/Encoder_arduino.cpp

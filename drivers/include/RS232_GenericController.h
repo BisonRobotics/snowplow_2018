@@ -34,16 +34,16 @@ public:
     SerialController(void);
 
     // constructor with serial port as argument
-    SerialController(const char* serialPort);
+    SerialController(const std::string& serialPort);
 
     // specify a serial device to use
-    void set_SerialPort(const char* serialPort);
+    void set_SerialPort(const std::string& serialPort);
 
     // read a certain number of bytes from the serial port
-    void readBuffer(char* buffer, int bufSize);
+    int readBuffer(char* buffer, int bufSize);
 
     // write a certain number of bytes from the serial port
-    void writeBuffer(char* buffer, int bufSize);
+    int writeBuffer(char* buffer, int bufSize);
 
     // set the read/write speeds for the serial port
     void set_BaudRate(int baudrate);
