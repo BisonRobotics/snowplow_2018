@@ -3,6 +3,8 @@
 #include <vector>
 #include <unistd.h>
 #include <GpsInterface.h>
+#include <GpsDataStructures.h>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -14,15 +16,27 @@ int main(int argc, char* argv[]) {
 
 	GpsInterface gps(argv[1]);
 
+	uint64_t start_time = 0;
+
+	{ // dont need this stuff after first timestamp
+		timeval tv;
+		gettimeofday(&tv, NULL);
+		start_time = ((tv.tv_sec * 1000000) + tv.tv_usec);
+	}
+
 	while(1) {
-		GpsMsgType gpsmsgt = gps.update();
-		
-		if(gpsmsgt == GpsMsgType_GGA) {
-			cout << gps.getTimestamp(gpsmsgt) << " : " << gps.getMessage(gpsmsgt) << endl;
-			vector<string> parsed_message = GpsInterface::splitGpsMessage(gps.getMessage(gpsmsgt));
-			for(string s : parsed_message)
-				cout << "    " << s << endl;
-			cout << endl;
+
+		// get all available data
+		GpsMsgType gpsType = gps.update();
+		if(gpsType == GpsMsgType_GGA) {
+			// tokenize GPS data
+			vector<string> str_vec = GpsInterface::splitGpsMessage(gps.getMessage(gpsType));
+			
+			cout << gps.getMessage(gpsType) << endl;
+
+			// get numeric data
+			GpsGGA gga_msg = GpsMsgResolve::Gga(str_vec);
+			cout << gga_msg << endl;
 		}
 
 		usleep(50000); // update @ ~20Hz
@@ -30,4 +44,3 @@ int main(int argc, char* argv[]) {
 
 	return 0;
 }
-

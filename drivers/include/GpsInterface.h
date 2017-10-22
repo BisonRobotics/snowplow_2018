@@ -5,6 +5,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "GpsDataStructures.h"
+
+typedef std::vector<std::string> GpsTokenArray;
 
 /*
 	Enumeration of GPS message types
@@ -21,7 +24,7 @@ enum GpsMsgType {
 };
 
 /*
-	GpsInterface attempts to open every gps device as an ifstream object
+	GpsInterface opens every gps device as an ifstream object
 */
 class GpsInterface {
 private:
@@ -65,8 +68,46 @@ public:
 
 	// object-less method to parse GPS message strings
 	static std::vector<std::string> splitGpsMessage(const std::string& input);
-
 };
+
+/*
+	Retrieve numeric data from tokenized GPS data (vector<string>)
+*/
+class GpsMsgResolve {
+public:
+
+
+
+	static GpsGGA Gga(GpsTokenArray& gta) {
+		GpsGGA gpsgga;
+
+		gpsgga.name = gta[0];
+
+		gpsgga.utcTimestamp = atoi(gta[1].c_str());
+
+		gpsgga.latitudeDegrees =  ((gta[2][0] - 48) * 10);
+		gpsgga.latitudeDegrees += ((gta[2][1] - 48) * 1);
+		gpsgga.latitudeMinutes = atof(gta[2].c_str() + 2);
+		gpsgga.latitudeDirection = gta[3][0];
+	
+		gpsgga.longitudeDegrees =  ((gta[4][0] - 48) * 100);
+		gpsgga.longitudeDegrees += ((gta[4][1] - 48) * 10);
+		gpsgga.longitudeDegrees += ((gta[4][2] - 48) * 1);
+		gpsgga.longitudeMinutes = atof(gta[4].c_str() + 3);
+		gpsgga.longitudeDirection = gta[5][0];
+
+		gpsgga.fixQuality = atoi(gta[6].c_str());
+
+		gpsgga.numberSatellites = atoi(gta[7].c_str());
+
+		gpsgga.altitude = atof(gta[9].c_str());
+
+		gpsgga.checksum = std::stoul(gta[14].c_str() + 1, nullptr, 16);
+
+		return gpsgga;
+	}
+};
+
 
 #endif // __JJC__GPS__INTERFACE__H__
 

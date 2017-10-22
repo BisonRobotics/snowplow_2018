@@ -8,14 +8,6 @@ GpsInterface::GpsInterface(const std::string& filename) {
 	this->filename = filename;
 
 	file.open(filename, std::ios::in | std::ios::binary);
-
-/*	file.set_SerialPort(filename);
-	file.set_BaudRate(B115200);      // baudrate
-	file.set_WordSize(WordSize_8); // 8 data bits
-	file.set_Parity(  Parity_Off); // no parity bits
-	file.set_StopBits(StopBits_1); // 1 stop bits
-	file.start();
-*/
 }
 
 bool GpsInterface::compGpsTag(const char* orig, const char* comp) {
@@ -213,6 +205,7 @@ std::vector<std::string> GpsInterface::splitGpsMessage(const std::string& input)
 			case STATE_expect_chunk_end:
 				if(c == ',') {
 					message_chunk.push_back('\0');
+					//std::cout << &message_chunk[0] << ' ';
 					parsed_msg.push_back(&message_chunk[0]);
 					message_chunk.clear();
 					current_state = STATE_expect_chunk_start;
@@ -226,6 +219,7 @@ std::vector<std::string> GpsInterface::splitGpsMessage(const std::string& input)
 	}
 
 	// checksum is the last element
+	message_chunk.push_back('\0'); // still needs to be null-terminated
 	parsed_msg.push_back(&message_chunk[0]);
 
 	return parsed_msg;
