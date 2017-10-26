@@ -2,32 +2,60 @@
 this file was made by Andrew Vetter.
 This progrma is used for testing and deveoplment of the ecnoder driver class.
 */
-
-#include <Encoder_arduino.h>
+//#include <Encoder_arduino.h>
 #include <iostream>
 #include <unistd.h>
+#include "../../include/RS232_GenericController.h"
 
 using namespace std;
 
- const char* port = "/dev/ttyUSB2";
-int main(int argc, char const *argv[]) {
-  Encoder encoder = Encoder(port);
+void readChunk(SerialController& sc, char* buf, int n) {
+    int bytes_read = 0;
 
-  cout << "getting data from port" << std::endl;
+    while(bytes_read < n) {
+        bytes_read += sc.readBuffer(buf+bytes_read, n-bytes_read);
+    }
+}
 
-WheelIncrement stuff;
+int main(int argc, char *argv[]) {
 
-  //std::cerr << *data  << std::endl;
-  while(1) {
+    if(argc != 2) {
+        cerr << "Usage: " << argv[0] << "<port name>" << endl;
+        return 1;
+    }
+/*
+    std::ifstream arduino;
+    arduino.open(argv[1], ios::in | ios::binary);
+*/
+    SerialController arduino(argv[1]);
+    arduino.set_BaudRate(B57600);
+    arduino.set_Parity(Parity_Off);
+    arduino.set_WordSize(WordSize_8);
+    arduino.set_StopBits(StopBits_1);
+    arduino.start();
 
-    static int iters= 0;
+    char buf[8];
+    //uint8_t ping = 1;
 
-    stuff = encoder.getRawData();
-    cout << ++iters << ' ';
-    cout << stuff.left <<"  other: "<< stuff.right << endl;
-    sleep(500);
-  }
+    cout << "getting data from arduino" << endl;
+    char a = 'a';
+    while(1) {
+        //if(arduino.is_open()){
+        arduino.writeBuffer(&a, 1);
+
+        for(int i = 0; i < 8; i++)
+            buf[i] = 0x00;
+
+        readChunk(arduino, buf, 8);
+//        arduino.readBuffer(buf, 8);
+
+        int16_t right = *(int16_t*)(buf+5);
+        int16_t left  = *(int16_t*)(buf+2);
+
+        cout << "Right: " << right << " Left: " << left << endl;
+        usleep(100000);
+    }
 
 
-  return 0;
+    return 0;
 }

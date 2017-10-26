@@ -51,10 +51,10 @@ test_lidar: tcp lidar
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL
 
-test_encoder: rs232 encoder
-	$(info --  building SICK Lidar test program)
+test_encoder: rs232
+	$(info --  building encoder test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/encoderTest.cpp -I$(INCLUDE)/ $(STDOPTS)
-	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/encoder.o $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(STDOPTS)
 
 # rules for all of the individual object files that need to be linked in final executable
 

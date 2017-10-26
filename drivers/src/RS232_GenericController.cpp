@@ -1,6 +1,6 @@
 #include <RS232_GenericController.h>
 
-#include <sys/ioctl.h>
+#include <string>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
@@ -14,27 +14,26 @@ SC::SerialController(void) {
     ;
 }
 
-SC::SerialController(const char* serialPort) {
+SC::SerialController(const std::string& serialPort) {
     SerialController::set_SerialPort(serialPort);
 }
 
-void SC::set_SerialPort(const char* serialPort) {
+void SC::set_SerialPort(const std::string& serialPort) {
     memset(&tty, 0, sizeof tty);
-    fd = open(serialPort, O_RDWR | O_NOCTTY | O_NDELAY); // pretty standard flags
+    fd = open(serialPort.c_str(), O_RDWR | O_NOCTTY | O_NDELAY); // pretty standard flags
     if(fd < 0) {
         int e = errno;
         std::cerr << "Error opening file" << std::endl;
-        std::cerr << "    Error: " << strerror(e) << std::endl;
+        std::cerr << "    Error code: " << e << std::endl;
         exit(-1);
     }
 
     if(tcgetattr(fd, &tty) < 0) {
         int e = errno;
         std::cerr << "Error retrieving attributes" << std::endl;
-        std::cerr << "    Error: " << strerror(e) << std::endl;
+        std::cerr << "    Error code: " << e << std::endl;
         exit(-1);
     }
-
     serialPortSet = true;
 }
 
@@ -42,12 +41,12 @@ void SC::parityEnable(void) {
     tty.c_cflag |= PARENB;
 }
 
-void SC::writeBuffer(char* buffer, int bufSize) {
-    write(fd, buffer, bufSize);
+int SC::writeBuffer(char* buffer, int bufSize) {
+    return write(fd, buffer, bufSize);
 }
 
-void SC::readBuffer(char* buffer, int bufSize) {
-    read(fd, buffer, bufSize);
+int SC::readBuffer(char* buffer, int bufSize) {
+    return read(fd, buffer, bufSize);
 }
 
 void SC::set_BaudRate(int baudrate) {
@@ -55,17 +54,17 @@ void SC::set_BaudRate(int baudrate) {
     cfsetospeed(&tty, baudrate);
 }
 
-void SC::set_Parity(SC::PARITY parity) {
+void SC::set_Parity(Parity parity) {
     switch(parity) {
-        case SC::PARITY::EVEN:
+        case Parity_Even:
             tty.c_cflag |= PARENB;
             tty.c_cflag &= ~PARODD;
             break;
-        case SC::PARITY::ODD:
+        case Parity_Odd:
             tty.c_cflag |= PARENB;
             tty.c_cflag |= PARODD;
             break;
-        case SC::PARITY::OFF: // disable the parity bit
+        case Parity_Off: // disable the parity bit
             tty.c_cflag &= ~PARENB;
             break;
         default:
@@ -74,12 +73,12 @@ void SC::set_Parity(SC::PARITY parity) {
     }
 }
 
-void SC::set_StopBits(SC::STOPBITS stopbits) {
+void SC::set_StopBits(StopBits stopbits) {
     switch(stopbits) {
-        case SC::STOPBITS::_1:
+        case StopBits_1:
             tty.c_cflag &= ~CSTOPB;
             break;
-        case SC::STOPBITS::_2:
+        case StopBits_2:
             tty.c_cflag |= CSTOPB;
             break;
         default:
@@ -88,13 +87,13 @@ void SC::set_StopBits(SC::STOPBITS stopbits) {
     }
 }
 
-void SC::set_WordSize(SC::WORDSIZE wordsize) {
+void SC::set_WordSize(WordSize wordsize) {
     switch(wordsize) {
-        case SC::WORDSIZE::_7:
+        case WordSize_7:
             tty.c_cflag &= ~CSIZE;
             tty.c_cflag |= CS7;
             break;
-        case SC::WORDSIZE::_8:
+        case WordSize_8:
             tty.c_cflag &= ~CSIZE;
             tty.c_cflag |= CS8;
             break;
@@ -117,68 +116,6 @@ void SerialController::start(void) {
     }
 }
 
-bool SerialController::set_ModeBlocking(void) {
-    if(!serialPortSet) {
-        std::cerr << "Error: serial port not started" << std::endl;
-        exit(-1);
-    }
-
-    int sFlags = fcntl(fd, F_GETFL, 0);
-
-    if(sFlags == -1)
-        return false;
-
-    sFlags &= ~O_NONBLOCK;
-
-    if(fcntl(fd, F_SETFL, sFlags) == -1)
-        return false;
-
-    // return success
-    return true;
-}
-
-bool SerialController::set_ModeNonblocking(void) {
-    int sFlags = fcntl(fd, F_GETFL, 0);
-
-    if(sFlags == -1)
-        return false;
-
-    sFlags |= O_NONBLOCK;
-
-    if(fcntl(fd, F_SETFL, sFlags) == -1)
-        return false;
-
-    // return success
-    return true;
-}
-
-int SerialController::hasData(void) {
-    int bAvail;
-    ioctl(fd, FIONREAD, &bAvail);
-    return bAvail;
-}
-
 int SerialController::get_FileDescriptor(void) {
     return fd;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
