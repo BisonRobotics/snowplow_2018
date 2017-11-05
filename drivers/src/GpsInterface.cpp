@@ -74,4 +74,3 @@ void GpsInterface::syncMsg(void) {
         }
     }
 }
-

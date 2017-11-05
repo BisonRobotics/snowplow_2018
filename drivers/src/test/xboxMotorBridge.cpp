@@ -46,6 +46,7 @@ int main(int argc, char* argv[]) {
             leftSpeed = 0;
 
         cout  << "Left speed: " << leftSpeed << " Right speed: " << rightSpeed << endl;
+        cout  << "Left wheel speed: " << << "right wheel speed" << << endl;
 
         rqi.wheelVelocity(rightSpeed, rMotor);
         rqi.wheelVelocity(leftSpeed,  lMotor);

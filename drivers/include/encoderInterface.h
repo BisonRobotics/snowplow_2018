@@ -12,18 +12,17 @@ struct WheelIncrement {
   int16_t right;
 };
 
-class Encoder{
+class encoders{
 private:
+    SerialController arduino;
 
 public:
     enum SIDE{
-        LEFT, RIGHT
+        ENC_LEFT, ENC_RIGHT
     };
 
     // constructor with explict port that the arduino is plug in to
-    Encoder(SIDE, ){
-
-    };
+    void Encoder();
 
     // set the port that the arduino is connected to on the computer.
     void setPort(const char* usbPort);
