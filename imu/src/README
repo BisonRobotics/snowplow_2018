@@ -1,0 +1,4 @@
+The three repos here are defined as follows:
+- collect: all source code related to collecting data from the IMU(s)
+- position: all source code related to converting data from the IMU into position data
+- kinmod: all source code related to generating a kinematic model from the IMU data
