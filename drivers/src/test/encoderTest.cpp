@@ -33,7 +33,7 @@ bool checkDatSum(char* buf, char __char){
     }
     // makes sure the 2nd byte is a capital L
     if('L' != (*(int16_t*)(buf+1))){
-        // cout << "L not in right spot  L: "<< *(int16_t*)(buf+1) << endl;
+        cout << "L not in right spot  L: "<< *(int16_t*)(buf+1) << endl;
         return false;
     }
     // makes sure the 4th byte is a capital R
@@ -43,7 +43,7 @@ bool checkDatSum(char* buf, char __char){
     }
 
     //build our checksum
-    int16_t cpuCheckSum = __char ^ 'L'^ *(int16_t*)(buf+2) ^ 'R' ^ *(int16_t*)(buf+5) ;
+    int16_t cpuCheckSum = __char ^ 'L' ^ *(int16_t*)(buf+2) ^ 'R' ^ *(int16_t*)(buf+5) ;
 
     if(arCheckSum == cpuCheckSum) {
         //update previous checksum
@@ -60,12 +60,12 @@ bool checkDatSum(char* buf, char __char){
 
 void StartDatEncoder(SerialController encoders){
 
-    encoders.set_SerialPort(port);
-    encoders.set_BaudRate(B57600);
-    encoders.set_Parity(Parity_Off);
-    encoders.set_WordSize(WordSize_8);
-    encoders.set_StopBits(StopBits_1);
-    encoders.start();
+    arduino.set_SerialPort(port);
+    arduino.set_BaudRate(B57600);
+    arduino.set_Parity(Parity_Off);
+    arduino.set_WordSize(WordSize_8);
+    arduino.set_StopBits(StopBits_1);
+    arduino.start();
 
 
 }
@@ -77,7 +77,13 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     port = argv[1];
-   StartDatEncoder(arduino);
+//   StartDatEncoder(arduino);
+    arduino.set_SerialPort(port);
+    arduino.set_BaudRate(B57600);
+    arduino.set_Parity(Parity_Off);
+    arduino.set_WordSize(WordSize_8);
+    arduino.set_StopBits(StopBits_1);
+    arduino.start();
 
     char buf[8];
     //uint8_t ping = 1;
