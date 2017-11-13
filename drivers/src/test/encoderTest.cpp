@@ -1,122 +1,69 @@
-/*
-this file was made by Andrew Vetter.
-This progrma is used for testing and deveoplment of the ecnoder driver class.
-*/
-//#include <Encoder_arduino.h>
+
 #include <iostream>
-#include <unistd.h>
-#include "../../include/RS232_GenericController.h"
+#include <XboxControllerInterface.h>
+#include <RoboteQ.h>
+#include <EncoderInterface.h>
 
 using namespace std;
-SerialController arduino;
-string port;
 
-int16_t pChecksum = 0;
-
-void readChunk(SerialController& sc, char* buf, int n) {
-    int bytes_read = 0;
-
-    while(bytes_read < n) {
-        cout << "trying to read. N:" << n << endl;
-        bytes_read += sc.readBuffer(buf+bytes_read, n-bytes_read);
-    }
+float mapFloat(float in_min, float in_max, float x, float out_min, float out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-//compares checksum from arduino with CPU
-bool checkDatSum(char* buf, char __char){
+int main(int argc, char* argv[]) {
 
-    //test if the char we sent match the one returned
-    int16_t arCheckSum = *(int16_t*)(buf+7);
-    if(__char != (char)*(int16_t*)(buf)){
-        cout << "Error: char recieved: "<< (char)*(int16_t*)(buf) << endl;
-        return false;
-    }
-    // makes sure the 2nd byte is a capital L
-    if('L' != (*(int16_t*)(buf+1))){
-        cout << "L not in right spot  L: "<< *(int16_t*)(buf+1) << endl;
-        return false;
-    }
-    // makes sure the 4th byte is a capital R
-    if('R' != (char)(*(int16_t*)(buf+4))){
-        cout << "R not in right spot" << endl;
-        return false;
-    }
+    ArduinoEncoder AEs = ArduinoEncoder("/dev/ttyUSB3");
 
-    //build our checksum
-    int16_t cpuCheckSum = __char ^ 'L' ^ *(int16_t*)(buf+2) ^ 'R' ^ *(int16_t*)(buf+5) ;
+    SDL_Init(SDL_INIT_EVERYTHING); // initialize joysticks
 
-    if(arCheckSum == cpuCheckSum) {
-        //update previous checksum
-        pChecksum = arCheckSum;
-        return true;
-    }  else if(arCheckSum == pChecksum){
-        return false;
+    RoboteQInterface rqi("/dev/ttyUSB4"); // change this depending on where serial converter mounts to
+    XboxController xc;
+    // cout << "1 " << endl;
+    SDL_Joystick* j = 0;
+
+    if(SDL_NumJoysticks()) {
+        j = SDL_JoystickOpen(0);
     } else {
-        // cout << "checksum does not match cpu: " << cpuCheckSum << " recieved:  " << *(int16_t*)(buf+7) << endl;
-        return false;
+        SDL_Quit();
+        return -1;
     }
+    // cout << "2 " << endl;
+    int rightSpeed = 0;
+    int leftSpeed  = 0;
+    XboxController::STICK sRight = XboxController::STICK::RIGHT;
+    XboxController::STICK sLeft  = XboxController::STICK::LEFT;
 
-}
+    WHEEL lMotor = WHEEL::LEFT;
+    WHEEL rMotor = WHEEL::RIGHT;
+    char datbyte;
+    char firstByte;
 
-void StartDatEncoder(SerialController encoders){
-
-    arduino.set_SerialPort(port);
-    arduino.set_BaudRate(B57600);
-    arduino.set_Parity(Parity_Off);
-    arduino.set_WordSize(WordSize_8);
-    arduino.set_StopBits(StopBits_1);
-    arduino.start();
-
-
-}
-
-int main(int argc, char *argv[]) {
-
-    if(argc != 2) {
-        cerr << "Usage: " << argv[0] << "<port name>" << endl;
-        return 1;
-    }
-    port = argv[1];
-//   StartDatEncoder(arduino);
-    arduino.set_SerialPort(port);
-    arduino.set_BaudRate(B57600);
-    arduino.set_Parity(Parity_Off);
-    arduino.set_WordSize(WordSize_8);
-    arduino.set_StopBits(StopBits_1);
-    arduino.start();
-
-    char buf[8];
-    //uint8_t ping = 1;
-
-    cout << "getting data from arduino" << endl;
-    char _char = 'a';
     while(1) {
-        //if(arduino.is_open()){
+        xc.update();
+        // AEs.updateEncoders();
+        // cout << "3 " << endl;
+        datbyte = AEs.requestData();
 
-        // cout << "sending char " << endl;
-        arduino.writeBuffer(&_char, 1);
+        rightSpeed = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sRight), -1000.0, 1000.0);
+        leftSpeed  = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sLeft),  -1000.0, 1000.0);
 
-        for(int i = 0; i < 8; i++){
-            buf[i] = 0x00;
+        if(rightSpeed < 100 && rightSpeed > -100){
+            rightSpeed = 0;
         }
+        if(leftSpeed < 100 && leftSpeed > -100){
+            leftSpeed = 0;
+        }
+        firstByte = AEs.readEncoders();
 
-        // readChunk(arduino, buf, 8);
-        // cout << "reading Data" << endl;
-       arduino.readBuffer(buf, 8);
-
-       cout << (char)(*(int16_t*)(buf)) << (char)(*(int16_t*)(buf+1)) << *(int16_t*)(buf+2) << *(int16_t*)(buf+3) << (char)(*(int16_t*)(buf+4)) << *(int16_t*)(buf+5) << *(int16_t*)(buf+6) << *(int16_t*)(buf+7)<< endl;
-
-       int16_t ch = *(int16_t*)(buf);
-       if(checkDatSum(buf, (char)ch)){
-
-            int16_t right = *(int16_t*)(buf+5);
-            int16_t left  = *(int16_t*)(buf+2);
-        //    cout << *(int16_t*)(buf) << *(int16_t*)(buf+1) << *(int16_t*)(buf+2) << *(int16_t*)(buf+3) << *(int16_t*)(buf+4) << *(int16_t*)(buf+5) << *(int16_t*)(buf+6) << *(int16_t*)(buf+7)<< endl;
-            cout << "char " << (char)ch <<" Right: " << right << " Left: " << left << endl;
-       }
-       usleep(1000000);
-
+        cout  << "Left xbox speed: " << leftSpeed << " Right xbox speed: " << rightSpeed << endl;
+        if(datbyte == firstByte){
+            cout  << "Left encoderSpeed: " << AEs.encoders.leftSpeed_Raw << " Right encoderSpeed " << AEs.encoders.rightSpeed_Raw << endl;
+        }else{
+            cout << "sendByte: " << datbyte << " recieved: " << firstByte << endl;
+        }
+        rqi.wheelVelocity(rightSpeed, rMotor);
+        rqi.wheelVelocity(leftSpeed,  lMotor);
+        usleep(10000);
     }
 
-    return 0;
 }

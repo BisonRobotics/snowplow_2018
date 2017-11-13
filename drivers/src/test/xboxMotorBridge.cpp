@@ -2,7 +2,6 @@
 
 #include <XboxControllerInterface.h>
 #include <RoboteQ.h>
-#include "../../include/Encoderinterface.h"
 
 using namespace std;
 
@@ -11,16 +10,9 @@ float mapFloat(float in_min, float in_max, float x, float out_min, float out_max
 }
 
 int main(int argc, char* argv[]) {
-    if(argc != 2) {
-        cerr << "Usage: " << argv[0] << "<arduino port name>" << endl;
-        return 1;
-    }
-
-    arduino_encoder ACs = arduino_encoder(argv[1]);
-
     SDL_Init(SDL_INIT_EVERYTHING); // initialize joysticks
 
-    RoboteQInterface rqi("/dev/ttyUSB0"); // change this depending on where serial converter mounts to
+    RoboteQInterface rqi("/dev/ttyUSB2"); // change this depending on where serial converter mounts to
     XboxController xc;
 
     SDL_Joystick* j = 0;
@@ -31,6 +23,8 @@ int main(int argc, char* argv[]) {
         SDL_Quit();
         return -1;
     }
+    int rightSpeed = 0;
+    int leftSpeed  = 0;
 
     XboxController::STICK sRight = XboxController::STICK::RIGHT;
     XboxController::STICK sLeft  = XboxController::STICK::LEFT;
@@ -40,7 +34,7 @@ int main(int argc, char* argv[]) {
 
     while(1) {
         xc.update();
-        ACs.updateEncoders();
+
         rightSpeed = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sRight), -1000.0, 1000.0);
         leftSpeed  = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sLeft),  -1000.0, 1000.0);
 
@@ -52,7 +46,6 @@ int main(int argc, char* argv[]) {
         }
 
         cout  << "Left xbox speed: " << leftSpeed << " Right xbox speed: " << rightSpeed << endl;
-        cout  << "Left encoderSpeed: " << ACs.encoders.leftSpeed_Raw << "Right encoderSpeed" << ACs.encoders.rightSpeed_Raw << endl;
 
         rqi.wheelVelocity(rightSpeed, rMotor);
         rqi.wheelVelocity(leftSpeed,  lMotor);

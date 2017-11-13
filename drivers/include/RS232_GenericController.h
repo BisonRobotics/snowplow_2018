@@ -61,6 +61,8 @@ public:
     void start(void);
 
     int get_FileDescriptor(void);
+
+    void readChunk(SerialController& sc, char* buf, int n);
 };
 
 #endif // __JJC__RS232GENERIC__H__

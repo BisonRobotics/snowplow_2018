@@ -8,9 +8,9 @@ RoboteQInterface::RoboteQInterface(char* fileSer) {
     // initialize serial interface
     mainSC.set_SerialPort(fileSer);
     mainSC.set_BaudRate(B115200);
-    mainSC.set_Parity(SerialController::PARITY::OFF);
-    mainSC.set_StopBits(SerialController::STOPBITS::_1);
-    mainSC.set_WordSize(SerialController::WORDSIZE::_8);
+    mainSC.set_Parity(Parity_Off);
+    mainSC.set_StopBits(StopBits_1);
+    mainSC.set_WordSize(WordSize_8);
     mainSC.start();
 }
 

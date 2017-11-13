@@ -41,7 +41,7 @@ test_xBox: xbox
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/xboxcontroller.cpp -I$(INCLUDE)/ $(STDOPTS) -I$(MISCLIB)/ -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/xbox.o $(MISCLIB)/color.o -I$(INCLUDE)/ $(STDOPTS) -lSDL
 
-test_xboxMotorBridge: xbox roboteq rs232 encoder
+test_xboxMotorBridge: xbox roboteq rs232
 	$(info --  building xboxMotorBridge test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/xboxMotorBridge.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/xbox.o $(OBJS)/roboteq.o $(OBJS)/rs232.o $(STDOPTS) -lSDL
@@ -51,10 +51,10 @@ test_lidar: tcp lidar
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/sickSensor.cpp -I$(INCLUDE)/ $(STDOPTS) -lSDL
 	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/tcp.o $(OBJS)/lidar.o $(STDOPTS) -lSDL
 
-test_encoder: rs232
+test_encoder: encoder rs232 xbox roboteq
 	$(info --  building encoder test program)
 	$(CXX) -c -o $(OBJS)/$@.o $(TESTSRC)/encoderTest.cpp -I$(INCLUDE)/ $(STDOPTS)
-	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(STDOPTS)
+	$(CXX) -o $(BINS)/$@ $(OBJS)/$@.o $(OBJS)/rs232.o $(OBJS)/encoder.o $(OBJS)/xbox.o $(OBJS)/roboteq.o  $(STDOPTS) -lSDL
 
 # rules for all of the individual object files that need to be linked in final executable
 

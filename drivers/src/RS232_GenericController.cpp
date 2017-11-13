@@ -119,3 +119,11 @@ void SerialController::start(void) {
 int SerialController::get_FileDescriptor(void) {
     return fd;
 }
+
+void SerialController::readChunk(SerialController& sc, char* buf, int n) {
+    int bytes_read = 0;
+
+    while(bytes_read < n) {
+        bytes_read += sc.readBuffer(buf+bytes_read, n-bytes_read);
+    }
+}
