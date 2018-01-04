@@ -31,9 +31,9 @@ void setup() {
   pinMode(3,INPUT);
   pinMode(4,INPUT);
   pinMode(5,INPUT);
-  pinMode(13, OUTPUT);
+  //pinMode(13, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(2), pulse1, RISING); //when a rising edge is detected on pin 2/3 run the function pulse1/2. phase A
-  attachInterrupt(digitalPinToInterrupt(3), pulse2, RISING);
+  attachInterrupt(digitalPinToInterrupt(6), pulse2, RISING);
   
 }
 
@@ -72,7 +72,7 @@ void pulse1(){
 
 
 void pulse2(){
-  if (digitalRead(5)==0)
+  if (digitalRead(8)==0)
     pulseCountRight--;
   else
     pulseCountRight++;

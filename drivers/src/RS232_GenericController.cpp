@@ -46,6 +46,7 @@ int SC::writeBuffer(char* buffer, int bufSize) {
 }
 
 int SC::readBuffer(char* buffer, int bufSize) {
+//    std::cout << "buff size lowlevel read: " << bufSize << std::endl;
     return read(fd, buffer, bufSize);
 }
 
@@ -122,8 +123,15 @@ int SerialController::get_FileDescriptor(void) {
 
 void SerialController::readChunk(SerialController& sc, char* buf, int n) {
     int bytes_read = 0;
-
+    int read_byte;
     while(bytes_read < n) {
-        bytes_read += sc.readBuffer(buf+bytes_read, n-bytes_read);
+        read_byte = sc.readBuffer(buf+bytes_read, n-bytes_read);
+        if(read_byte == -1){
+            break;
+        }else{
+        bytes_read ++;
+        }
+
+        usleep(5000);
     }
 }

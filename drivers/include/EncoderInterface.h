@@ -6,10 +6,10 @@
 #include <RS232_GenericController.h>
 
 struct ENCODERS{
-  int16_t leftSpeed_Raw;   //left wheel speed in raw ticks form
-  int16_t rightSpeed_Raw;  //right wheel speed in raw ticks form
-  double rightSpeed_MpS;   //Right wheel speed in Meters per second
+  int leftSpeed_Raw;   //left wheel speed in raw ticks form
+  int rightSpeed_Raw;  //right wheel speed in raw ticks form
   double leftSpeed_MpS;     //Left wheel speed in Meters per second
+  double rightSpeed_MpS;   //Right wheel speed in Meters per second
 };
 enum SIDE{
     ENC_LEFT, ENC_RIGHT
@@ -24,6 +24,8 @@ private:
     bool checkDatSum(char* buf);
 public:
 
+    int Lspeed;
+    int Rspeed; 
     ENCODERS encoders;
 
     // constructor with explict port that the arduino is plug in to
@@ -34,7 +36,7 @@ public:
     // set the port that the arduino is connected to on the computer.
     void setPort(char* usbPort);
 
-    // gets the data from ENCODERS
+    // gets the data from ENCODERS retunrs the first byte of the string
     char readEncoders(void);
 
     char requestData(void);

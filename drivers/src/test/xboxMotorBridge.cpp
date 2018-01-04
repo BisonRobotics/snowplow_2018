@@ -12,7 +12,7 @@ float mapFloat(float in_min, float in_max, float x, float out_min, float out_max
 int main(int argc, char* argv[]) {
     SDL_Init(SDL_INIT_EVERYTHING); // initialize joysticks
 
-    RoboteQInterface rqi("/dev/ttyUSB2"); // change this depending on where serial converter mounts to
+    RoboteQInterface rqi("/dev/ttyUSB0"); // change this depending on where serial converter mounts to
     XboxController xc;
 
     SDL_Joystick* j = 0;

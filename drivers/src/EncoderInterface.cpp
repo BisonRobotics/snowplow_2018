@@ -75,21 +75,22 @@ char ArduinoEncoder::readEncoders(void){
         this->buf[i] = 0x00;
     }
 
+    // std::cout << "reading the  data" << std::endl;
     //read recieved data
     arduino.readChunk(arduino, buf, 8);
 
     for(int i=0; i<8; i++){
         std::cout << buf[i];
     }
-
     std::cout << std::endl;
+
     //if the schecksum is valid populate values in the struct
     if(checkDatSum(buf)){
-        this->encoders.rightSpeed_Raw = *(int16_t*)(buf+5);
-        this->encoders.leftSpeed_Raw  = 8 + *(int16_t*)(buf+2);
-    //    ArduinoEncoder::encoders.rightSpeed_MpS = encoders.rightSpeed_Raw * some converstion factor.;
-    //    ArduinoEncoder::encoders.leftSpeed_MpS = encoders.rightSpeed_Raw * convervstion factor;
+        this->Lspeed = *(int16_t*)(buf+2);
+        this->Rspeed = *(int16_t*)(buf+5);
+        // ArduinoEncoder::encoders.rightSpeed_MpS = encoders.rightSpeed_Raw * some converstion factor.;
+        // ArduinoEncoder::encoders.leftSpeed_MpS =(* encoders.rig)htSpeed_Raw * convervstion factor;
     }
-    usleep(10000);
+    // usleep(10000);
     return buf[0];
 }
