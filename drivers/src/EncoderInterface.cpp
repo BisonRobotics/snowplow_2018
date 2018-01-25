@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "../include/EncoderInterface.h"
-// #include "../include/RS232_GenericController.h"
 
 
 ArduinoEncoder::ArduinoEncoder(void){
@@ -28,6 +27,21 @@ void ArduinoEncoder::setPort(char* usbPort){
     this->port = usbPort;
     arduino.set_SerialPort(usbPort);
 }
+
+int16_t ArduinoEncoder::getSpeed(SIDE side){
+
+        switch (side) {
+            case ENC_LEFT:
+                return this->Lspeed;
+                break;
+            case ENC_RIGHT:
+                return this->Rspeed;
+                break;
+            default:
+                std::cerr << "Invalid SIDE argument" << std::endl;
+                exit(-1); // all error comditions return -1
+        }
+    }
 
 //compares checksum from arduino with CPU
 bool ArduinoEncoder::checkDatSum(char* buf){
@@ -75,22 +89,18 @@ char ArduinoEncoder::readEncoders(void){
         this->buf[i] = 0x00;
     }
 
-    // std::cout << "reading the  data" << std::endl;
     //read recieved data
     arduino.readChunk(arduino, buf, 8);
 
     for(int i=0; i<8; i++){
-        std::cout << buf[i];
+        std::cout << (int16_t)buf[i] << " ";
     }
-    std::cout << std::endl;
 
-    //if the schecksum is valid populate values in the struct
+    //if the checksum is valid populate values in the struct
     if(checkDatSum(buf)){
-        this->Lspeed = *(int16_t*)(buf+2);
-        this->Rspeed = *(int16_t*)(buf+5);
-        // ArduinoEncoder::encoders.rightSpeed_MpS = encoders.rightSpeed_Raw * some converstion factor.;
-        // ArduinoEncoder::encoders.leftSpeed_MpS =(* encoders.rig)htSpeed_Raw * convervstion factor;
+        this->Lspeed = buf[3]; //*(int16_t*)(buf+2);
+        this->Rspeed = ((int16_t)buf[5] << 8  ) | (buf[6] & 0xff);
     }
-    // usleep(10000);
+
     return buf[0];
 }

@@ -3,7 +3,6 @@ This is the code that runs on the arduino(s) that read the encoders directly.
 For information about the encoders please see the encoder pdf on the google drive: https://drive.google.com/open?id=0BxlsGkfBNU4WXzI0QmpOMTduUVk 
 for arduino syntax and documentation see: https://www.arduino.cc/en/Reference/HomePage
 
-Brought to you by Brady Goehner, Zack O'brian, and Andrew Vetter 
 */
 int16_t pulseCountLeft;
 int16_t pulseCountRight;  
@@ -17,7 +16,7 @@ byte generateChecksum(byte* buf, int n) {
   
   for(int i = 0; i < n; i++){
     result = result ^ buf[i];
-  }
+  } 
   return result;
 }
 
@@ -44,11 +43,11 @@ void loop() {
       byte echo = Serial.read();
 //      digitalWrite(13, HIGH);
       buf[0] = echo;
-      buf[1] = (byte)76;
-      buf[2] = (pulseCountLeft & 0xff);
-      buf[3] = ((pulseCountLeft >> 8) & 0xFF);
-      buf[4] = (byte)82;
-      buf[5] = (pulseCountRight & 0xff);
+      buf[1] = 'L'; 
+      buf[2] = (pulseCountLeft >> 8) ;//((pulseCountLeft >> 8) & 0xFF);
+      buf[3] = (pulseCountLeft & 0xFF);
+      buf[4] = 'R';
+      buf[5] = (pulseCountRight & 0xFF);
       buf[6] = ((pulseCountRight >> 8) & 0xFF);
 
       // add checksum to buffer

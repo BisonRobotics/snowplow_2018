@@ -5,32 +5,26 @@
 #include <iostream>
 #include <RS232_GenericController.h>
 
-struct ENCODERS{
-  int leftSpeed_Raw;   //left wheel speed in raw ticks form
-  int rightSpeed_Raw;  //right wheel speed in raw ticks form
-  double leftSpeed_MpS;     //Left wheel speed in Meters per second
-  double rightSpeed_MpS;   //Right wheel speed in Meters per second
-};
 enum SIDE{
     ENC_LEFT, ENC_RIGHT
 };
 class ArduinoEncoder{
+
 private:
+
+    int16_t Lspeed;
+    int16_t Rspeed;
     char* port;
     char sendByte;
     SerialController arduino;
     char buf[8];
-
     bool checkDatSum(char* buf);
+
 public:
 
-    int Lspeed;
-    int Rspeed; 
-    ENCODERS encoders;
-
-    // constructor with explict port that the arduino is plug in to
     ArduinoEncoder();
 
+    // constructor with explict port that the arduino is plug in to
     ArduinoEncoder(char* usbPort);
 
     // set the port that the arduino is connected to on the computer.
@@ -39,6 +33,12 @@ public:
     // gets the data from ENCODERS retunrs the first byte of the string
     char readEncoders(void);
 
+    // retruns the speed of one wheel side of the snowplow
+    int16_t getSpeed(SIDE side);
+
+    //requests data ffrom the arduino and populates the speed.
+    //returns the char sent to arduino
     char requestData(void);
+
 };
 #endif
