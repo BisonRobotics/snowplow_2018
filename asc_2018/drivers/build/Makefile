@@ -97,18 +97,13 @@ lidar: $(SRC)/LidarInterface.cpp
 	$(info ==  building SICK sensor interface)
 	$(CXX) -c -o $(OBJS)/lidar.o -I$(INCLUDE)/ $(SRC)/LidarInterface.cpp $(STDOPTS)
 
-<<<<<<< HEAD
-encoder: $(SRC)/Encoder_arduino.cpp
-	$(CXX) -c -o $(OBJS)/encoder.o -I$(INCLUDE)/ $(SRC)/Encoder_arduino.cpp $(STDOPTS)
+encoder: $(SRC)/EncoderInterface.cpp
+	$(info == building encoder interface files)
+	$(CXX) -c -o $(OBJS)/encoder.o -I$(INCLUDE)/ $(SRC)/EncoderInterface.cpp $(STDOPTS)
+
 
 # remove all built binaries
 clean:
 	$(info -- removing all binaries)
-=======
-encoder: $(SRC)/EncoderInterface.cpp
-	$(CXX) -c -o $(OBJS)/encoder.o -I$(INCLUDE)/ $(SRC)/EncoderInterface.cpp $(STDOPTS)
-
-# remove all built binaries
-clean:
->>>>>>> encoder_testing
-	rm bin/*
+	# remove all built binaries
+		rm bin/*

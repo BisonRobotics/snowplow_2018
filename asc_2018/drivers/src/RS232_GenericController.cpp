@@ -46,10 +46,6 @@ int SC::writeBuffer(char* buffer, int bufSize) {
 }
 
 int SC::readBuffer(char* buffer, int bufSize) {
-<<<<<<< HEAD
-=======
-//    std::cout << "buff size lowlevel read: " << bufSize << std::endl;
->>>>>>> encoder_testing
     return read(fd, buffer, bufSize);
 }
 

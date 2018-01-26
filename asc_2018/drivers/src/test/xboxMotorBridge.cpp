@@ -3,6 +3,7 @@
 #include <XboxControllerInterface.h>
 #include <RoboteQ.h>
 #include <unistd.h>
+#include <EncoderInterface.h>
 
 using namespace std;
 
@@ -13,7 +14,6 @@ float mapFloat(float in_min, float in_max, float x, float out_min, float out_max
 int main(int argc, char* argv[]) {
     SDL_Init(SDL_INIT_EVERYTHING); // initialize joysticks
 
-<<<<<<< HEAD
     if(argc != 2) {
         cerr << "Not enough arguments\n";
         cerr << "Usage: <progname> <seial device mount location>\n";
@@ -21,10 +21,8 @@ int main(int argc, char* argv[]) {
     }
 
     RoboteQInterface rqi(argv[1]); // always first argument to program
-=======
-    RoboteQInterface rqi("/dev/ttyUSB0"); // change this depending on where serial converter mounts to
->>>>>>> encoder_testing
     XboxController xc;
+    // ArduinoEncoder ard = ArduinoEncoder("??");//set udev rules
 
     SDL_Joystick* j = 0;
 
@@ -54,18 +52,15 @@ int main(int argc, char* argv[]) {
         rightSpeed = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sRight), min_speed, max_speed);
         leftSpeed  = -1 * mapFloat(-32768.0, 32767.0, xc.getJoyY(sLeft),  min_speed, max_speed);
 
-        if(rightSpeed < 100 && rightSpeed > -100){
+        if(rightSpeed < 150 && rightSpeed > -150){
             rightSpeed = 0;
         }
-        if(leftSpeed < 100 && leftSpeed > -100){
+        if(leftSpeed < 150 && leftSpeed > -150){
             leftSpeed = 0;
         }
 
-<<<<<<< HEAD
-        cout << "Left speed: " << leftSpeed << " Right speed: " << rightSpeed << endl;
-=======
-        cout  << "Left xbox speed: " << leftSpeed << " Right xbox speed: " << rightSpeed << endl;
->>>>>>> encoder_testing
+        cout << "Leftjo: " << leftSpeed << " Rightjoy: " << rightSpeed << endl;
+
 
         rqi.wheelVelocity(rightSpeed, rMotor);
         rqi.wheelVelocity(leftSpeed,  lMotor);

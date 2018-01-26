@@ -20,7 +20,7 @@
 #define OBJECT_THRESHOLD 1200.0f // distance between objs to be considered together (mm)
 
 // comment out to use file of pre-acquired data
-//#define USE_SENSOR
+#define USE_SENSOR
 
 // comment out to not use Object Detection algorithm
 #define USE_SPOD
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
         SDL_FillRect(screen, NULL, NULL);
         putTarget(screen);
 
-        const float MIN_MEASURE = 10.0; 
+        const float MIN_MEASURE = 10.0;
         // pre-process the data before passing it to spod
         for(int i = 1; i < reply.size(); i++) {
             if(reply[i] < MIN_MEASURE)
@@ -260,4 +260,3 @@ void putTarget(SDL_Surface* screen) {
     }
 
 }
-
